@@ -2,7 +2,7 @@ Shader "Reefkeeper/Pickup Outline"
 {
     Properties
     {
-        [HDR] _OutlineColor("Outline color", Color) = (1.6,1.4,0.5,1)
+        [HDR] _OutlineColor("Outline color", Color) = (1.6,1.6,1.6,1)
         _OutlineWidth("World width", Range(0.001,0.015)) = 0.004
     }
     SubShader

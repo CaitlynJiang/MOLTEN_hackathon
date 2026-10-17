@@ -19,6 +19,7 @@ namespace Reefkeeper
         public ReefCoralFragment Aimed { get; private set; }
         public Camera View => Camera.main;
         public bool HasPrompt => Aimed && Aimed != Held;
+        public bool CenterAimMode => !workshop.xrGroup.activeSelf || (simulator && simulator.isActiveAndEnabled && simulator.manipulatingFPS);
         readonly RaycastHit[] hits = new RaycastHit[64];
         readonly List<Home> homes = new List<Home>();
         XRInteractionSimulator simulator;
@@ -55,7 +56,7 @@ namespace Reefkeeper
                 holdParent = null; previousView = view;
             }
             UpdateHand(view);
-            bool centerAim = !workshop.xrGroup.activeSelf || (simulator && simulator.manipulatingFPS);
+            bool centerAim = CenterAimMode;
             bool canAim = Automated || workshop.xrGroup.activeSelf || Cursor.lockState == CursorLockMode.Locked;
             ReefCoralFragment target = null;
             if (centerAim && canAim) target = FindTarget(new Ray(view.transform.position, view.transform.forward));

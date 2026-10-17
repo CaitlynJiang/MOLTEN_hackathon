@@ -54,9 +54,9 @@ The simulator remains explicitly included in Windows builds. Hardware XR/OpenXR 
 
 ## Coral pickup and fullscreen
 
-For the simplest laptop check, press **F2**, click to capture the mouse, swim close to a hanging fragment and aim the center dot at it. Its edges light up and **[G] Grab coral** appears within 3 metres of unobstructed view. Tap **G** to pick it up; it stays at the lower right of the view after releasing the key. Aim at another fragment and tap G again to replace it. The previous held GameObject is destroyed, and its former suspension line stays hidden until reset. Pressing G with no target keeps the current coral.
+For the simplest laptop check, press **F2**, click to capture the mouse, swim close to a hanging fragment and aim the center dot at it. Its edges light up bright white and **[G] Grab coral** appears within 3 metres of unobstructed view. Tap **G** to pick it up; it stays at the lower right of the view after releasing the key. Aim at another fragment and tap G again to replace it. The previous held GameObject is destroyed, and its former suspension line stays hidden until reset. Pressing G with no target keeps the current coral.
 
-The XR simulator's body/FPS mode also supports center aiming and G. In controller mode, use the existing controller ray or direct grip: native selection transfers to the same persistent hand slot when grip is released. Only one coral is retained across both hands and camera modes. Grabbing the brush clears the held coral; picking coral returns the brush to its rest. **F5** resets the brush, dirt, every fragment and suspension line. Coral placement is not implemented yet.
+The XR simulator's body/FPS mode also supports center aiming and G. Center aim takes priority in this mode, so the same key cannot also pick a different coral with the simulated controller. In controller mode, use the existing controller ray or direct grip: native selection transfers to the same persistent hand slot when grip is released. Only one coral is retained across both hands and camera modes. Grabbing the brush clears the held coral; picking coral returns the brush to its rest. **F5** resets the brush, dirt, every fragment and suspension line. Coral placement is not implemented yet.
 
 **F11** switches between borderless fullscreen at the display's resolution and the previous window size. Windows also supports resizing/maximizing the window and its normal Alt+Enter fullscreen shortcut.
 
@@ -144,7 +144,7 @@ Reefkeeper.exe -reef-fish-smoke <absolute-output-directory> -screen-width 1600 -
 
 For repeatable art review, `-reef-art-capture <absolute-output-directory>` saves three engine renders: nursery overview, frame detail and the reef with fish. These offscreen views omit the HUD and simulator controller models. The local mood-board photographs remain reference material under the ignored `artifacts/moodboard` directory; they are not packaged as game textures.
 
-The pickup check exercises keyboard G, hover feedback, solid occlusion and reach, single-item replacement/destruction, empty-aim behavior, reset, native simulated controller grip, persistent holding and camera mode changes. It also switches F11 fullscreen on and off and verifies restoration of the original window size:
+The pickup check exercises keyboard G, hover feedback, solid occlusion and reach, single-item replacement/destruction, empty-aim behavior, reset, exclusive FPS center-aim input, native simulated controller grip, persistent holding and camera mode changes. It also switches F11 fullscreen on and off and verifies restoration of the original window size:
 
 ```text
 Reefkeeper.exe -reef-pickup-smoke <absolute-output-directory> -screen-fullscreen 0 -screen-width 1280 -screen-height 720

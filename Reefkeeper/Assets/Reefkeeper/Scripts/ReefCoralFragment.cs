@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace Reefkeeper
 {
@@ -37,6 +38,12 @@ namespace Reefkeeper
             RefreshOutline();
         }
         public void SetAim(bool value) { aimed = value; RefreshOutline(); }
+        // G also drives the simulator's right grip in FPS mode. Give center aim
+        // exclusive ownership there so one key press cannot grab two fragments.
+        public override bool IsSelectableBy(IXRSelectInteractor interactor) =>
+            (isSelected || !owner || !owner.CenterAimMode || ReferenceEquals(interactor, owner.hand)) && base.IsSelectableBy(interactor);
+        public override bool IsHoverableBy(IXRHoverInteractor interactor) =>
+            (!owner || !owner.CenterAimMode || ReferenceEquals(interactor, owner.hand)) && base.IsHoverableBy(interactor);
         void RefreshOutline()
         {
             Highlighted = (aimed || isHovered) && !isSelected && (!owner || owner.Held != this);
