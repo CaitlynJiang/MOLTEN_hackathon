@@ -20,6 +20,8 @@ Milestone 07: brightened the underwater palette with slightly warm daylight, lig
 
 Milestone 08: shifted the water slightly toward green, reduced the contrast of static sand ripples and grain, and strengthened the animated caustics on the sand and limestone. Sand caustics have a broader pattern and more focused highlights so the sunlight reads separately from the sediment texture. The Windows build passes; matching nursery and reef views were rendered and visually reviewed.
 
+Milestone 09: added F11 borderless fullscreen and resizable windows, plus 84 grabbable nursery fragments. Aimed fragments show an edge outline and a G prompt. Picking another fragment destroys the previously held one; F5 restores the nursery. Laptop pickup uses an XRI selection hand slot, while simulator controllers can grab the same `XRGrabInteractable` objects directly. The Windows build, pickup/fullscreen runtime check and existing XR swimming/brush regression all pass, including cleaning all 24 patches.
+
 ![Nursery frame and suspended fragments](docs/previews/milestone-08-detail.png)
 
 Earlier milestone 04 interaction views:
@@ -42,12 +44,27 @@ The official simulator drives tracked head/controller input. The brush is an `XR
 | WASD, Q / E | Move the body in FPS mode, or the selected controller in device mode |
 | Shift / B | Boost / brake while swimming in FPS mode |
 | Hold G | Grip with the selected controller; release G to drop |
-| F5 | Restore dirty patches and return the brush to its tray |
+| F5 | Restore dirty patches, brush and all nursery fragments |
 | F2 | Switch between XR simulation and the original desktop swimmer |
+| F11 | Toggle borderless fullscreen / original window size |
 
 Start by aiming the right controller at the brush on the tray, then hold **G**. In device mode, move the brush with **WASD + Q/E**; rotate it until the bristles face down, touch a dirty crossbar and sweep sideways. Keep G held while brushing. The simulator's own on-screen panel exposes additional controls. Repeated bracket presses can switch device types; this prototype is configured and tested for controller simulation, not optical hand tracking.
 
 The simulator remains explicitly included in Windows builds. Hardware XR/OpenXR provider setup, stereo rendering, headset performance, headset comfort and Rokoko live input are not validated. The screen-space HUD is for the laptop demo. Keyboard simulation and recorded/synthetic poses must not be presented as live glove tracking.
+
+## Coral pickup and fullscreen
+
+For the simplest laptop check, press **F2**, click to capture the mouse, swim close to a hanging fragment and aim the center dot at it. Its edges light up and **[G] Grab coral** appears within 3 metres of unobstructed view. Tap **G** to pick it up; it stays at the lower right of the view after releasing the key. Aim at another fragment and tap G again to replace it. The previous held GameObject is destroyed, and its former suspension line stays hidden until reset. Pressing G with no target keeps the current coral.
+
+The XR simulator's body/FPS mode also supports center aiming and G. In controller mode, use the existing controller ray or direct grip: native selection transfers to the same persistent hand slot when grip is released. Only one coral is retained across both hands and camera modes. Grabbing the brush clears the held coral; picking coral returns the brush to its rest. **F5** resets the brush, dirt, every fragment and suspension line. Coral placement is not implemented yet.
+
+**F11** switches between borderless fullscreen at the display's resolution and the previous window size. Windows also supports resizing/maximizing the window and its normal Alt+Enter fullscreen shortcut.
+
+| Aimed coral: edge highlight | Picked coral: single held item |
+| --- | --- |
+| ![Highlighted coral](docs/previews/milestone-09-highlight.png) | ![Held coral](docs/previews/milestone-09-held.png) |
+
+These engine views omit the HUD; the G prompt and inventory hint appear during normal play.
 
 ## Desktop controls (F2)
 
@@ -84,7 +101,7 @@ The seabed is a mesh with smooth sand banks, dunes and a winding trough, not Uni
 - Small depth/speed display and keyboard hints.
 - Editable source assets and a reproducible scene builder. Generated assets live in `Assets/Reefkeeper/Generated`; save a copy of the scene before rebuilding if you have edited it by hand.
 
-The current nursery uses simple project-authored geometry based on the supplied reference photographs. Select **WORKSHOP / coral nursery maintenance → Nursery tree / interactive** to edit the working tree; additional trees live under **NURSERY / suspended coral trees**. Keep the interaction components/contact points when replacing its visual meshes. The hanging fragments are decorative; placing nursery fragments is the next interaction. Swimming motion capture and a current-meter prop remain optional later additions.
+The current nursery uses simple project-authored geometry based on the supplied reference photographs. Select **WORKSHOP / coral nursery maintenance → Nursery tree / interactive** to edit the working tree; additional trees live under **NURSERY / suspended coral trees**. Keep the interaction components/contact points when replacing its visual meshes. All four trees have grabbable hanging fragments; placing nursery fragments is the next interaction. Swimming motion capture and a current-meter prop remain optional later additions.
 
 ## Animated fish
 
@@ -126,6 +143,12 @@ Reefkeeper.exe -reef-fish-smoke <absolute-output-directory> -screen-width 1600 -
 ```
 
 For repeatable art review, `-reef-art-capture <absolute-output-directory>` saves three engine renders: nursery overview, frame detail and the reef with fish. These offscreen views omit the HUD and simulator controller models. The local mood-board photographs remain reference material under the ignored `artifacts/moodboard` directory; they are not packaged as game textures.
+
+The pickup check exercises keyboard G, hover feedback, solid occlusion and reach, single-item replacement/destruction, empty-aim behavior, reset, native simulated controller grip, persistent holding and camera mode changes. It also switches F11 fullscreen on and off and verifies restoration of the original window size:
+
+```text
+Reefkeeper.exe -reef-pickup-smoke <absolute-output-directory> -screen-fullscreen 0 -screen-width 1280 -screen-height 720
+```
 
 ## Credits
 
