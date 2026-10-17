@@ -2,9 +2,11 @@
 
 Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. If the scene has not been generated yet, choose **Reefkeeper → Create or rebuild shallow reef** in the Editor menu.
 
-![Milestone 01 — scene rendered by the Windows prototype](docs/previews/milestone-01-reef.png)
+![Milestone 02 — URP-WaterShaders rendered by the Windows prototype](docs/previews/milestone-02-water.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
+
+Milestone 02: imported URP-WaterShaders with its original subgraph GUIDs, configured Unity 6 fullscreen color/depth rendering, and applied its caustics to reef materials. Windows shader compilation and runtime movement/collision checks pass; three underwater views were rendered and reviewed. Headset/XR support remains untested.
 
 ## Controls
 
@@ -23,7 +25,8 @@ No gravity, head bob, camera roll or sprint FOV changes. Change the public setti
 
 ## Current scope
 
-- A procedurally authored shallow reef with sand ripples, animated caustics, coral, limestone, a distant arch, fish, seagrass, particles and a water ceiling.
+- A procedurally authored shallow reef with animated caustics, coral, limestone, a distant arch, fish, seagrass, particles and a water ceiling.
+- Underwater caustics and subtle fullscreen distortion from aniruddhahar's MIT-licensed URP-WaterShaders. The original Shader Graphs are preserved; scene-specific materials and Unity 6 renderer configuration live in ReefSceneBuilder. Adjust `Generated/UnderwaterDistortion.mat` (`_Distortion`, currently 0.002) to change or disable distortion; rebuilding resets generated settings.
 - View-relative swimming, boost, drag, active braking, collisions, a surface limit and an exploration boundary.
 - Small depth/speed display and keyboard hints.
 - Editable source assets and a reproducible scene builder. Generated assets live in `Assets/Reefkeeper/Generated`; save a copy of the scene before rebuilding if you have edited it by hand.
@@ -50,4 +53,4 @@ Build with `Reefkeeper.Editor.ReefSceneBuilder.BuildWindows` through Unity's `-e
 
 ## Credits
 
-Unity's bundled Universal 3D template supplies the URP render settings. Reef geometry, shaders, movement and interface were authored during this hackathon with Codex assistance. No downloaded third-party models, textures or sound clips are currently used.
+Unity's bundled Universal 3D template supplies the URP render settings. Reef geometry, movement, interface and supporting shaders were authored during this hackathon with Codex assistance. Underwater Shader Graphs are by **aniruddhahar**, [URP-WaterShaders](https://github.com/aniruddhahar/URP-WaterShaders), MIT, pinned to `1d18105ab76f894e3187d32bb4e412dbcb35df2c`. Source, license and integration notes are in `Reefkeeper/Assets/ThirdParty/URP-WaterShaders`; the license is also copied alongside Windows builds. No downloaded third-party models, textures or sound clips are currently used.

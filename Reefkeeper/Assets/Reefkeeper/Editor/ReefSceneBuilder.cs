@@ -36,7 +36,10 @@ namespace Reefkeeper.Editor
             QualitySettings.renderPipeline = pipeline;
             pipeline.msaaSampleCount = 4;
             pipeline.shadowDistance = 50;
+            pipeline.supportsCameraDepthTexture = true;
+            pipeline.supportsCameraOpaqueTexture = true;
             EditorUtility.SetDirty(pipeline);
+            ConfigureUnderwaterEffect();
             PlayerSettings.companyName = "Reefkeeper";
             PlayerSettings.productName = "Reefkeeper";
             PlayerSettings.defaultScreenWidth = 1600;
@@ -230,6 +233,7 @@ namespace Reefkeeper.Editor
                 target = BuildTarget.StandaloneWindows64, options = BuildOptions.Development });
             if (result.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 throw new Exception("Windows build failed: " + result.summary.result);
+            File.Copy("Assets/ThirdParty/URP-WaterShaders/LICENSE.txt", "Builds/Windows/URP-WaterShaders-LICENSE.txt", true);
             Debug.Log("REEFKEEPER_BUILD_PASSED");
         }
 
@@ -241,10 +245,65 @@ namespace Reefkeeper.Editor
         }
         static Material Surface(string name, Color color, float caustics, float sandAmount = 0, float sway = 0)
         {
+            // Preserve vertex animation on grass and avoid world-fixed caustics on moving fish.
+            if (sway == 0 && name != "Fish")
+            {
+                var underwater = MaterialAsset(name, "Shader Graphs/WaterUnder", color);
+                underwater.SetTexture("Texture2D_D71B5CBC", Texture2D.whiteTexture);
+                underwater.SetColor("Color_DB714CC1", color);
+                underwater.SetColor("Color_2B7C42F7", new Color(1.2f, 1.8f, 1.65f) * caustics);
+                underwater.SetFloat("Vector1_3E4E7F58", 15);
+                underwater.SetFloat("Vector1_810FF6ED", 1.2f);
+                underwater.SetFloat("Vector1_DE7903F8", 1.5f);
+                underwater.SetFloat("Vector1_994EA204", 3.5f);
+                underwater.SetFloat("Vector1_E79FBA7D", 4);
+                underwater.SetFloat("Vector1_5443DC82", 1);
+                underwater.SetFloat("Vector1_A8CC0681", 2);
+                underwater.SetVector("Vector4_85FB229A", new Vector4(0.08f, 0.05f, -0.04f, 0.06f));
+                EditorUtility.SetDirty(underwater);
+                return underwater;
+            }
             var m = MaterialAsset(name, "Reefkeeper/Reef Surface", color);
-            m.SetFloat("_Caustics", caustics); m.SetFloat("_Sand", sandAmount); m.SetFloat("_Sway", sway);
+            m.SetFloat("_Caustics", 0); m.SetFloat("_Sand", sandAmount); m.SetFloat("_Sway", sway);
             EditorUtility.SetDirty(m);
             return m;
+        }
+        static void ConfigureUnderwaterEffect()
+        {
+            var material = MaterialAsset("UnderwaterDistortion", "Shader Graphs/WaterDistortion", Color.white);
+            material.SetFloat("_World_Water_Level", 15);
+            material.SetFloat("_Distortion", 0.002f);
+            material.SetFloat("_Distortion_Scale", 5);
+            material.SetFloat("_DistortionBlendDistance", 2);
+            material.SetVector("_Speeds", new Vector4(0.035f, 0.025f, 0, 0));
+            material.SetColor("_UnderwaterTint", new Color(0.83f, 0.96f, 1, 0));
+            EditorUtility.SetDirty(material);
+            var renderer = AssetDatabase.LoadAssetAtPath<UniversalRendererData>("Assets/Settings/PC_Renderer.asset");
+            if (!renderer) throw new Exception("PC renderer is missing.");
+            FullScreenPassRendererFeature feature = null;
+            foreach (var existing in renderer.rendererFeatures)
+                if (existing.name == "Reef underwater distortion") feature = existing as FullScreenPassRendererFeature;
+            if (!feature)
+            {
+                feature = ScriptableObject.CreateInstance<FullScreenPassRendererFeature>();
+                feature.name = "Reef underwater distortion";
+                AssetDatabase.AddObjectToAsset(feature, renderer);
+                renderer.rendererFeatures.Add(feature);
+            }
+            feature.passMaterial = material;
+            feature.injectionPoint = FullScreenPassRendererFeature.InjectionPoint.BeforeRenderingPostProcessing;
+            feature.fetchColorBuffer = true;
+            feature.requirements = ScriptableRenderPassInput.Depth;
+            feature.SetActive(true);
+            EditorUtility.SetDirty(feature);
+            renderer.SetDirty();
+            EditorUtility.SetDirty(renderer);
+        }
+
+        public static void RebuildAndBuildWindows()
+        {
+            CreateScene();
+            BuildWindows();
         }
         static Material MaterialAsset(string name, string shader, Color color)
         {

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Sand
-  m_Shader: {fileID: 4800000, guid: 2728d4a23c502654385268af1d0691d1, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 2363321b77a7b8b4b863e2a51def12b0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -18,23 +18,66 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_D71B5CBC:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Vector1_3E4E7F58: 15
+    - Vector1_5443DC82: 1
+    - Vector1_810FF6ED: 1.2
+    - Vector1_994EA204: 3.5
+    - Vector1_A8CC0681: 2
+    - Vector1_DE7903F8: 1.5
+    - Vector1_E79FBA7D: 4
     - _Caustics: 0.95
     - _Cull: 2
     - _Cutoff: 0.5
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _Sand: 1
     - _Sway: 0
     m_Colors:
+    - Color_2B7C42F7: {r: 1.14, g: 1.7099999, b: 1.5675, a: 0.95}
+    - Color_DB714CC1: {r: 0.69, g: 0.73, b: 0.57, a: 1}
+    - Vector4_47405F4E: {r: 1, g: 1, b: 0, a: 0}
+    - Vector4_85FB229A: {r: 0.08, g: 0.05, b: -0.04, a: 0.06}
     - _BaseColor: {r: 0.69, g: 0.73, b: 0.57, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!114 &2858442698413965063
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10
