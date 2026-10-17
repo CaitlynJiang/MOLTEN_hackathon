@@ -19,6 +19,11 @@ namespace Reefkeeper
             var args = Environment.GetCommandLineArgs();
             int index = Array.IndexOf(args, "-reef-xr-smoke");
             if (index < 0 || index + 1 >= args.Length) yield break;
+            // Hidden test players must keep synthetic input enabled without window focus.
+            // This setting is only changed for this opt-in test process.
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
             string output = args[index + 1]; Directory.CreateDirectory(output);
             var routine = Check(output);
             while (true)
@@ -56,11 +61,20 @@ namespace Reefkeeper
             Require(right && swim.simulator.isActiveAndEnabled, "XR rig and simulator active");
             keyboard = InputSystem.AddDevice<Keyboard>("Reef smoke keyboard");
             Vector3 originalPosition = swim.transform.position;
+            // Verify actual collision-controller travel with sub-millimetre frame steps.
+            for (int i = 0; i < 350; i++) swim.Tick(swim.view.transform.forward, false, false, 0.001f);
+            Require(Vector3.Distance(originalPosition, swim.transform.position) > 0.15f, "High-frame-rate swimming preserves tiny steps");
+            for (int i = 0; i < 20; i++) swim.Tick(Vector3.zero, false, true, 0.05f);
+            var capsule = swim.GetComponent<CharacterController>();
+            capsule.enabled = false; swim.transform.position = originalPosition; capsule.enabled = true;
             Keys(Key.W); yield return new WaitForSeconds(0.35f);
-            Require(Vector3.Distance(originalPosition, swim.transform.position) > 0.03f, "FPS mode swims the XR Origin");
+            Require(Vector3.Distance(originalPosition, swim.transform.position) > 0.03f,
+                "FPS mode swims the XR Origin; distance=" + Vector3.Distance(originalPosition, swim.transform.position)
+                + " fpsMode=" + swim.simulator.manipulatingFPS + " keyboardEnabled=" + keyboard.enabled
+                + " currentKeyboard=" + Keyboard.current?.name + " held=" + keyboard.wKey.isPressed
+                + " dt=" + Time.deltaTime + " velocity=" + swim.Velocity);
             Keys(Key.B); yield return new WaitForSeconds(0.35f); Keys(); yield return null;
             Require(swim.Velocity.magnitude < 0.01f, "XR active brake stops motion");
-            var capsule = swim.GetComponent<CharacterController>();
             capsule.enabled = false; swim.transform.position = originalPosition; capsule.enabled = true;
             Log("XR swimming and brake");
             PrototypeSmokeCheck.Capture(swim.view, Path.Combine(output, "rack-before.png"));

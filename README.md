@@ -2,7 +2,7 @@
 
 Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline, XR Interaction Toolkit **3.3.2**. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. The saved scene starts at the nursery rack with the official XR Interaction Simulator active. No headset is required for this mode.
 
-![Milestone 04 — nursery workshop rendered by the Windows prototype](docs/previews/milestone-04-overview.png)
+![Milestone 05 — animated Quaternius fish in the reef](docs/previews/milestone-05-fish.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
 
@@ -11,6 +11,8 @@ Milestone 02: imported URP-WaterShaders with its original subgraph GUIDs, config
 Milestone 03: added a winding sand channel, raised banks and dunes, with a saved mesh collider; introduced a bilingual Editor art panel for lighting, materials and terrain parameters. Windows build and runtime checks, including descent onto the uneven seabed, pass. The palette and placeholder models remain ready for the user's art direction.
 
 Milestone 04: added Unity's XR Interaction Simulator, underwater XR Origin movement, a grabbable brush and a nursery rack with 24 cleanable patches. The Windows build and both runtime suites pass: simulated swimming/braking, keyboard grip and release, brush following, contact-based cleaning, completion, reset and mode switching. Screenshots below are engine renders with the HUD omitted. Headset and Rokoko input remain untested.
+
+Milestone 05: imported Quaternius's seven animated fish models with separate URP materials and reusable prefabs. Three small-fish schools and one manta ray now swim through the saved reef scene. Windows build, fish runtime checks and the XR interaction regression pass. Validation covers actual skinned vertex deformation, looping animation, path motion, seabed clearance and all 24 rack patches. Also removed the starter rig's 1 mm movement cutoff, which discarded slow XR motion at high frame rates, and made the opt-in input check work in hidden windows. The existing scene palette and nursery layout are preserved for further art direction.
 
 ![Brush close-up after cleaning the first crossbar](docs/previews/milestone-04-brushing.png)
 
@@ -73,6 +75,15 @@ The seabed is a mesh with smooth sand banks, dunes and a winding trough, not Uni
 
 The nursery rack is a replaceable placeholder. Keep the interaction components/contact points when replacing its visual meshes with reference-based art. Next: placing nursery fragments. Swimming motion capture is optional polish. A current-meter prop is an optional later interaction.
 
+## Animated fish
+
+Quaternius's CC0 Animated Fish Pack supplies seven rigged models and swimming clips. The scene uses 26 small fish across three species plus one manta ray. Their animation phases and speeds vary, and `ReefFishSchool` moves each group around an editable loop while maintaining clearance above the seabed. These are ambient paths; obstacle avoidance, predator behavior and a full Boids simulation are not implemented.
+
+- Select **REEF / Quaternius animated fish** in the Hierarchy, then one of its school children. Move that child to shift the route; adjust **Orbit**, **Angular Speed** and **Height Variation** in its Inspector.
+- Reusable prefabs, separate species materials and animation controllers live in `Assets/Reefkeeper/Generated/AnimatedFish`. Dolphin, shark and whale prefabs are included as optional assets and are not placed in this nursery scene.
+- Original FBX files and their license live in `Assets/ThirdParty/QuaterniusAnimatedFish`. The previous procedural school is disabled in the scene and can be restored.
+- Environment candidates are listed in [the stylized reef asset shortlist](docs/STYLIZED_REEF_ASSETS.zh-CN.md); those environment packs have not been imported.
+
 ## Mocap capture while the loaner gloves are available
 
 Keep the original Rokoko recordings and ask the hardware desk which export permission is available. Export animation with finger bones (FBX suitable for Unity when available), together with the actor/rig and calibration information. Record slow and natural-speed takes, with a neutral lead-in and lead-out.
@@ -97,8 +108,16 @@ The opt-in XR check uses simulated keyboard actions for swimming, controller tra
 Reefkeeper.exe -reef-xr-smoke <absolute-output-directory> -screen-width 1600 -screen-height 900 -windowed
 ```
 
+The fish check verifies actual skinned mesh deformation over time, looping clips, path motion, supported URP materials and sampled seabed clearance. It captures portraits of all four placed species and a habitat view:
+
+```text
+Reefkeeper.exe -reef-fish-smoke <absolute-output-directory> -screen-width 1600 -screen-height 900 -windowed
+```
+
 ## Credits
 
 Unity's bundled Universal 3D template supplies the URP render settings. Reef geometry, movement, interface and supporting shaders were authored during this hackathon with Codex assistance. Underwater Shader Graphs are by **aniruddhahar**, [URP-WaterShaders](https://github.com/aniruddhahar/URP-WaterShaders), MIT, pinned to `1d18105ab76f894e3187d32bb4e412dbcb35df2c`. Source, license and integration notes are in `Reefkeeper/Assets/ThirdParty/URP-WaterShaders`; the license is also copied alongside Windows builds.
 
-XR rig, controller models, input actions and simulator assets come from Unity's **XR Interaction Toolkit 3.3.2** samples, under the Unity Companion License; see `Reefkeeper/Assets/Samples/XRI-LICENSE.md`. Sample controller materials are overridden with project URP materials. This is the first imported model/UI asset set; the underwater reef and nursery props remain project-authored placeholders.
+XR rig, controller models, input actions and simulator assets come from Unity's **XR Interaction Toolkit 3.3.2** samples, under the Unity Companion License; see `Reefkeeper/Assets/Samples/XRI-LICENSE.md`. Sample controller materials are overridden with project URP materials. The underwater reef and nursery props remain project-authored placeholders.
+
+Animated fish are by **Quaternius**, [LowPoly Animated Fish](https://quaternius.itch.io/lowpoly-animated-fish), CC0 1.0. Original files were downloaded from [the creator's OpenGameArt release](https://opengameart.org/content/animated-fish). Their license and provenance are preserved in `Assets/ThirdParty/QuaterniusAnimatedFish`; the license is also copied alongside Windows builds.

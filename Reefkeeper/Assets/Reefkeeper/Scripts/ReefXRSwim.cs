@@ -15,7 +15,12 @@ namespace Reefkeeper
         public Vector3 Velocity { get; private set; }
         CharacterController body;
 
-        void Awake() { body = GetComponent<CharacterController>(); }
+        void Awake()
+        {
+            body = GetComponent<CharacterController>();
+            // The starter rig's 1 mm cutoff discards slow movement at high frame rates.
+            body.minMoveDistance = 0;
+        }
         void Update()
         {
             if (!view || !simulator) return;
