@@ -10,8 +10,14 @@ namespace Reefkeeper
         public bool Complete => Cleaned >= 0.999f;
         MaterialPropertyBlock properties;
         Vector3 originalScale;
+        Color dirtColor;
 
-        void Awake() { originalScale = dirtVisual.transform.localScale; properties = new MaterialPropertyBlock(); }
+        void Awake()
+        {
+            originalScale = dirtVisual.transform.localScale;
+            dirtColor = dirtVisual.sharedMaterial.GetColor("_BaseColor");
+            properties = new MaterialPropertyBlock();
+        }
         public void ApplyStroke(float tangentDistance)
         {
             if (tangentDistance <= 0 || Complete) return;
@@ -28,7 +34,7 @@ namespace Reefkeeper
             scale.z *= Mathf.Lerp(1, 0.25f, Cleaned);
             dirtVisual.transform.localScale = scale;
             properties ??= new MaterialPropertyBlock();
-            properties.SetColor("_BaseColor", Color.Lerp(new Color(0.2f, 0.25f, 0.075f), new Color(0.35f, 0.30f, 0.16f), Cleaned));
+            properties.SetColor("_BaseColor", Color.Lerp(dirtColor, dirtColor * 1.15f, Cleaned));
             dirtVisual.SetPropertyBlock(properties);
         }
     }

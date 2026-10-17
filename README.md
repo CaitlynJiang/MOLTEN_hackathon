@@ -2,7 +2,7 @@
 
 Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline, XR Interaction Toolkit **3.3.2**. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. The saved scene starts at the nursery rack with the official XR Interaction Simulator active. No headset is required for this mode.
 
-![Milestone 05 — animated Quaternius fish in the reef](docs/previews/milestone-05-fish.png)
+![Milestone 06 — blue water and a tiered coral nursery](docs/previews/milestone-06-nursery.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
 
@@ -14,7 +14,13 @@ Milestone 04: added Unity's XR Interaction Simulator, underwater XR Origin movem
 
 Milestone 05: imported Quaternius's seven animated fish models with separate URP materials and reusable prefabs. Three small-fish schools and one manta ray now swim through the saved reef scene. Windows build, fish runtime checks and the XR interaction regression pass. Validation covers actual skinned vertex deformation, looping animation, path motion, seabed clearance and all 24 rack patches. Also removed the starter rig's 1 mm movement cutoff, which discarded slow XR motion at high frame rates, and made the opt-in input check work in hidden windows. The existing scene palette and nursery layout are preserved for further art direction.
 
-![Brush close-up after cleaning the first crossbar](docs/previews/milestone-04-brushing.png)
+Milestone 06: used the supplied photographic mood board to shift the water toward blue, soften caustics, introduce fine sand/ripple texture and replace the table-shaped rack with a three-tier coral nursery. The nursery has slender stems, open lattice trays, suspended branching fragments, buoyancy floats and seabed tethers. Its 24 cleanable patches sit along the three front rims; three additional trees establish the nursery setting. Quaternius fish models, materials and animations retain their existing style. The Windows build and XR interaction checks pass, including all 24 patches, completion and reset; three art views were rendered and visually reviewed.
+
+![Nursery frame and suspended fragments](docs/previews/milestone-06-detail.png)
+
+Earlier milestone 04 interaction views:
+
+![Brush close-up on the previous table-shaped rack](docs/previews/milestone-04-brushing.png)
 
 | Before cleaning | After cleaning |
 | --- | --- |
@@ -73,7 +79,7 @@ The seabed is a mesh with smooth sand banks, dunes and a winding trough, not Uni
 - Small depth/speed display and keyboard hints.
 - Editable source assets and a reproducible scene builder. Generated assets live in `Assets/Reefkeeper/Generated`; save a copy of the scene before rebuilding if you have edited it by hand.
 
-The nursery rack is a replaceable placeholder. Keep the interaction components/contact points when replacing its visual meshes with reference-based art. Next: placing nursery fragments. Swimming motion capture is optional polish. A current-meter prop is an optional later interaction.
+The current nursery uses simple project-authored geometry based on the supplied reference photographs. Select **WORKSHOP / coral nursery maintenance → Nursery tree / interactive** to edit the working tree; additional trees live under **NURSERY / suspended coral trees**. Keep the interaction components/contact points when replacing its visual meshes. The hanging fragments are decorative; placing nursery fragments is the next interaction. Swimming motion capture and a current-meter prop remain optional later additions.
 
 ## Animated fish
 
@@ -113,6 +119,8 @@ The fish check verifies actual skinned mesh deformation over time, looping clips
 ```text
 Reefkeeper.exe -reef-fish-smoke <absolute-output-directory> -screen-width 1600 -screen-height 900 -windowed
 ```
+
+For repeatable art review, `-reef-art-capture <absolute-output-directory>` saves three engine renders: nursery overview, frame detail and the reef with fish. These offscreen views omit the HUD and simulator controller models. The local mood-board photographs remain reference material under the ignored `artifacts/moodboard` directory; they are not packaged as game textures.
 
 ## Credits
 

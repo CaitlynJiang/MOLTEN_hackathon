@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_D71B5CBC:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 1193fc5a9e1fc9940b1cdaefb303d4d0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -61,11 +61,11 @@ Material:
     - _Sand: 1
     - _Sway: 0
     m_Colors:
-    - Color_2B7C42F7: {r: 1.14, g: 1.7099999, b: 1.5675, a: 0.95}
-    - Color_DB714CC1: {r: 0.69, g: 0.73, b: 0.57, a: 1}
-    - Vector4_47405F4E: {r: 1, g: 1, b: 0, a: 0}
+    - Color_2B7C42F7: {r: 0.45499998, g: 0.56549996, b: 0.65, a: 0.65}
+    - Color_DB714CC1: {r: 0.72, g: 0.69, b: 0.62, a: 1}
+    - Vector4_47405F4E: {r: 44, g: 44, b: 0, a: 0}
     - Vector4_85FB229A: {r: 0.08, g: 0.05, b: -0.04, a: 0.06}
-    - _BaseColor: {r: 0.69, g: 0.73, b: 0.57, a: 1}
+    - _BaseColor: {r: 0.72, g: 0.69, b: 0.62, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &2858442698413965063

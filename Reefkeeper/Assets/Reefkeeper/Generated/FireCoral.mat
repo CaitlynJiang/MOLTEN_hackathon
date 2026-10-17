@@ -61,11 +61,11 @@ Material:
     - _Sand: 0
     - _Sway: 0
     m_Colors:
-    - Color_2B7C42F7: {r: 0.36, g: 0.54, b: 0.495, a: 0.3}
-    - Color_DB714CC1: {r: 0.94, g: 0.37, b: 0.13, a: 1}
+    - Color_2B7C42F7: {r: 0.055999998, g: 0.0696, b: 0.08, a: 0.08}
+    - Color_DB714CC1: {r: 0.61, g: 0.32, b: 0.18, a: 1}
     - Vector4_47405F4E: {r: 1, g: 1, b: 0, a: 0}
     - Vector4_85FB229A: {r: 0.08, g: 0.05, b: -0.04, a: 0.06}
-    - _BaseColor: {r: 0.94, g: 0.37, b: 0.13, a: 1}
+    - _BaseColor: {r: 0.61, g: 0.32, b: 0.18, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &4606536415263981633

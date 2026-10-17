@@ -128,4 +128,4 @@ Unity 官方说明：[URP/Lit](https://docs.unity3d.com/6000.0/Documentation/Man
 - 复制场景不会自动复制共享材质或 Volume Profile。想保留完全独立的美术版本，需要一起复制它们，或使用 Git 里程碑回退。
 - Play 中场景改动通常在退出时还原；材质等资源修改可能保留，因此统一在停止 Play 后做美术调整。
 - **不要点击 Create or rebuild shallow reef**：这是完整场景生成器，会覆盖手工布局和生成资源。
-- 当前基础版本：[milestone-04-xr-workshop](https://github.com/CaitlynJiang/MOLTEN_hackathon/tree/milestone-04-xr-workshop)。
+- 初始交互版本：[milestone-04-xr-workshop](https://github.com/CaitlynJiang/MOLTEN_hackathon/tree/milestone-04-xr-workshop)。照片参考后的美术版本：[milestone-06-blue-nursery](https://github.com/CaitlynJiang/MOLTEN_hackathon/tree/milestone-06-blue-nursery)。

@@ -23,7 +23,7 @@ Shader "Reefkeeper/Water Ceiling"
                     *sin(p.y*1.1+sin(p.x*0.5-_Time.y*0.15));
                 float shimmer=pow(saturate(wave),5);
                 float sun=pow(saturate(dot(normalize(i.world-_WorldSpaceCameraPos),normalize(float3(-0.3,0.9,0.2)))),22);
-                float3 col=_BaseColor.rgb*(0.8+wave*0.12)+shimmer*float3(0.24,0.39,0.32)+sun*float3(0.6,0.7,0.52);
+                float3 col=_BaseColor.rgb*(0.8+wave*0.12)+shimmer*float3(0.16,0.25,0.34)+sun*float3(0.62,0.79,1.0);
                 return half4(MixFog(col,i.fog*0.5),1);
             }
             ENDHLSL
