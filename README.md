@@ -2,11 +2,13 @@
 
 Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. If the scene has not been generated yet, choose **Reefkeeper → Create or rebuild shallow reef** in the Editor menu.
 
-![Milestone 02 — URP-WaterShaders rendered by the Windows prototype](docs/previews/milestone-02-water.png)
+![Milestone 03 — sculpted seabed rendered by the Windows prototype](docs/previews/milestone-03-terrain.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
 
 Milestone 02: imported URP-WaterShaders with its original subgraph GUIDs, configured Unity 6 fullscreen color/depth rendering, and applied its caustics to reef materials. Windows shader compilation and runtime movement/collision checks pass; three underwater views were rendered and reviewed. Headset/XR support remains untested.
+
+Milestone 03: added a winding sand channel, raised banks and dunes, with a saved mesh collider; introduced a bilingual Editor art panel for lighting, materials and terrain parameters. Windows build and runtime checks, including descent onto the uneven seabed, pass. The palette and placeholder models remain ready for the user's art direction.
 
 ## Controls
 
@@ -22,6 +24,17 @@ Milestone 02: imported URP-WaterShaders with its original subgraph GUIDs, config
 | Esc / left click | Release cursor / resume |
 
 No gravity, head bob, camera roll or sprint FOV changes. Change the public settings on **Diver / desktop input → DiveMotor** to tune the feel. This is currently a desktop prototype, not a validated VR build. Glove capture and live input are not connected yet.
+
+## Editing the look and terrain
+
+Open **Reefkeeper → Art controls - 美术调节** with `ShallowReef` open and Play stopped. This panel edits the actual scene lighting, fog, shared grading profile and materials; there is no runtime script that overwrites your art choices.
+
+- Water color, visibility, sunlight, exposure and saturation preview immediately. Enable Scene view effects/fog/post-processing, or use Game view, to see the complete look.
+- Select a material button to edit its normal Inspector, including Tint, Main Texture and Caustic Color. These are shared materials; duplicate and assign a material to a particular object if it should have its own look.
+- Adjust bank height, dunes, channel depth and detail, then press **应用地形**. This replaces only the seabed mesh/collider and moves registered props by the change in ground elevation; it preserves their placement offsets, materials and object identities. Undo is supported. Grounded prop references live on the seabed's `ReefSeabed` component; register new prop roots without also registering their children.
+- Use **保存材质与场景** to save everything. Edits made during Play are disabled in this panel. **Create or rebuild shallow reef** is the original full generator and resets the scene; avoid it when working on your own art/layout. **BuildWindows** builds the saved scene without regenerating it.
+
+The seabed is a mesh with smooth sand banks, dunes and a winding trough, not Unity Terrain/Landscape. The current models and flat textures are still placeholders; these tools prepare the scene for the user's realistic art direction rather than making the placeholder art photorealistic.
 
 ## Current scope
 
@@ -43,7 +56,7 @@ Recorded clips should remain reusable without the gloves; interaction events wil
 
 ## Validation
 
-**Reefkeeper → Validate swimming math** checks speed limits, diagonal normalization, coasting, brake priority and drag across frame rates. The command-line runtime smoke check also exercises actual CharacterController collision and the surface limit and captures three rendered views:
+**Reefkeeper → Validate swimming math** checks speed limits, diagonal normalization, coasting, brake priority and drag across frame rates. The command-line runtime smoke check also exercises actual CharacterController collision, descent onto the uneven seabed and the surface limit, and captures four rendered views:
 
 ```text
 Reefkeeper.exe -reef-smoke <absolute-output-directory> -screen-width 1600 -screen-height 900 -windowed

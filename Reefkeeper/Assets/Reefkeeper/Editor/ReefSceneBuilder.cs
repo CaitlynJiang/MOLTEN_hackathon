@@ -195,6 +195,13 @@ namespace Reefkeeper.Editor
             player.AddComponent<DiveHUD>().diver = motor;
             player.AddComponent<PrototypeSmokeCheck>();
 
+            var seabedSettings = ground.AddComponent<ReefSeabed>();
+            var anchors = new List<Transform>();
+            foreach (var renderer in life.GetComponentsInChildren<MeshRenderer>()) anchors.Add(renderer.transform);
+            foreach (Transform child in environment)
+                if (child.name == "Reef limestone") anchors.Add(child);
+            seabedSettings.groundedProps = anchors.ToArray();
+
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();
@@ -239,9 +246,7 @@ namespace Reefkeeper.Editor
 
         public static float FloorHeight(float x, float z)
         {
-            float banks = Mathf.SmoothStep(0, 1, Mathf.Abs(x) / 28) * 1.8f;
-            return Mathf.PerlinNoise(x * 0.055f + 10, z * 0.055f + 20) * 1.2f - 1.3f
-                + Mathf.Sin(z * 0.16f + x * 0.1f) * 0.22f + banks;
+            return ReefSeabed.Height(x, z);
         }
         static Material Surface(string name, Color color, float caustics, float sandAmount = 0, float sway = 0)
         {
@@ -366,7 +371,7 @@ namespace Reefkeeper.Editor
 
         static Mesh Seabed()
         {
-            var d = new MeshDraft(); const int n = 128;
+            var d = new MeshDraft(); const int n = 192;
             for (int z = 0; z <= n; z++) for (int x = 0; x <= n; x++)
             {
                 float px = (x / (float)n - 0.5f) * 110, pz = (z / (float)n - 0.5f) * 110;

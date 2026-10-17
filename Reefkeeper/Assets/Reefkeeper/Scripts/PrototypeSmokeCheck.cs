@@ -51,12 +51,20 @@ namespace Reefkeeper
             yield return new WaitForSeconds(1);
             Capture(motor.view, Path.Combine(output, "reef-coral.png"));
             yield return new WaitForSeconds(1);
+            controller.enabled = false;
+            transform.position = new Vector3(-14, 10, -20);
+            transform.rotation = Quaternion.Euler(0, 25, 0);
+            motor.view.transform.localRotation = Quaternion.Euler(24, 0, 0);
+            controller.enabled = true;
+            yield return new WaitForSeconds(1);
+            Capture(motor.view, Path.Combine(output, "reef-terrain.png"));
+            yield return new WaitForSeconds(1);
             Require(File.Exists(Path.Combine(output, "reef-spawn.png"))
                 && File.Exists(Path.Combine(output, "reef-landmark.png"))
                 && File.Exists(Path.Combine(output, "reef-coral.png")), "Rendered screenshots exist");
             File.WriteAllText(Path.Combine(output, "smoke-result.txt"),
-                "PASS: forward movement, sprint, coast, active brake, solid collision, surface limit, reset.\n"
-                + "Rendered spawn, landmark and coral screenshots. Desktop prototype; XR and Rokoko are not connected.\n");
+                "PASS: forward movement, sprint, coast, active brake, solid collision, seabed collision, surface limit, reset.\n"
+                + "Rendered spawn, landmark, coral and terrain screenshots. Desktop prototype; XR and Rokoko are not connected.\n");
             Application.Quit(0);
         }
 
@@ -109,6 +117,12 @@ namespace Reefkeeper
             Require(transform.position.z < wall.transform.position.z - 0.65f, "Solid collider prevents tunnelling");
             wall.SetActive(false);
             Destroy(wall);
+            m.ResetDive();
+            var seabed = GameObject.Find("Rippling sand seabed").GetComponent<MeshCollider>();
+            Require(seabed.Raycast(new Ray(start, Vector3.down), out var floor, 30), "Seabed underneath spawn");
+            for (int i = 0; i < 240; i++) m.Tick(Vector3.down, false, false, 1f / 60);
+            Require(transform.position.y > floor.point.y + 0.4f && transform.position.y < floor.point.y + 0.9f,
+                "Uneven seabed collision prevents passing through sand");
             m.ResetDive();
             for (int i = 0; i < 600; i++) m.Tick(Vector3.up, true, false, 1f / 60);
             Require(transform.position.y <= m.surfaceHeight - 0.79f, "Surface boundary");
