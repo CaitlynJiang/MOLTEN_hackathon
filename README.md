@@ -2,7 +2,7 @@
 
 Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline, XR Interaction Toolkit **3.3.2**. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. The saved scene starts at the nursery rack with the official XR Interaction Simulator active. No headset is required for this mode.
 
-![Milestone 07 — brighter water and a softly green seabed](docs/previews/milestone-07-nursery.png)
+![Milestone 08 — teal water, softer sand and clearer caustics](docs/previews/milestone-08-nursery.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
 
@@ -18,7 +18,9 @@ Milestone 06: used the supplied photographic mood board to shift the water towar
 
 Milestone 07: brightened the underwater palette with slightly warm daylight, lighter shadows and a subtle green tint near the sand. The water ceiling now uses irregular animated reflection patches and a brighter overhead color; its fog blending preserves those highlights. Surface reflection strength and ripple scale are editable material properties. The Windows build and shader compilation pass, and three matching art views were rendered for visual review. This pass changes lighting, grading and materials; the nursery geometry and Quaternius fish assets are unchanged.
 
-![Nursery frame and suspended fragments](docs/previews/milestone-07-detail.png)
+Milestone 08: shifted the water slightly toward green, reduced the contrast of static sand ripples and grain, and strengthened the animated caustics on the sand and limestone. Sand caustics have a broader pattern and more focused highlights so the sunlight reads separately from the sediment texture. The Windows build passes; matching nursery and reef views were rendered and visually reviewed.
+
+![Nursery frame and suspended fragments](docs/previews/milestone-08-detail.png)
 
 Earlier milestone 04 interaction views:
 

@@ -74,7 +74,7 @@ Material:
     - _Sand: 0
     - _Sway: 0
     m_Colors:
-    - Color_2B7C42F7: {r: 0.21839999, g: 0.28, b: 0.2604, a: 0.28}
+    - Color_2B7C42F7: {r: 0.29639998, g: 0.38, b: 0.3534, a: 0.38}
     - Color_DB714CC1: {r: 0.37, g: 0.45, b: 0.41, a: 1}
     - Vector4_47405F4E: {r: 1, g: 1, b: 0, a: 0}
     - Vector4_85FB229A: {r: 0.08, g: 0.05, b: -0.04, a: 0.06}

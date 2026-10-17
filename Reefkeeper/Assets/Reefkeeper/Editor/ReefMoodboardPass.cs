@@ -28,7 +28,7 @@ namespace Reefkeeper.Editor
             Physics.SyncTransforms();
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log("REEFKEEPER_MOODBOARD_READY: blue water, tiered coral nursery, original fish preserved");
+            Debug.Log("REEFKEEPER_MOODBOARD_READY: teal water, quiet sand and clearer caustics");
             ReefSceneBuilder.BuildWindows();
         }
 
@@ -36,28 +36,28 @@ namespace Reefkeeper.Editor
         {
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.055f, 0.36f, 0.46f);
+            RenderSettings.fogColor = new Color(0.055f, 0.405f, 0.435f);
             RenderSettings.fogStartDistance = 3;
             RenderSettings.fogEndDistance = 48;
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.43f, 0.63f, 0.72f);
-            RenderSettings.ambientEquatorColor = new Color(0.17f, 0.37f, 0.38f);
-            RenderSettings.ambientGroundColor = new Color(0.09f, 0.23f, 0.19f);
+            RenderSettings.ambientSkyColor = new Color(0.43f, 0.65f, 0.69f);
+            RenderSettings.ambientEquatorColor = new Color(0.17f, 0.40f, 0.37f);
+            RenderSettings.ambientGroundColor = new Color(0.09f, 0.25f, 0.19f);
             RenderSettings.sun.color = new Color(1, 0.96f, 0.86f);
             RenderSettings.sun.intensity = 2;
             RenderSettings.sun.shadowStrength = 0.58f;
             foreach (var camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 camera.backgroundColor = RenderSettings.fogColor;
-            Surface("Sand", new Color(0.64f, 0.72f, 0.63f), 0.9f);
-            AddSandGrain();
-            Surface("Limestone", new Color(0.37f, 0.45f, 0.41f), 0.28f);
+            Surface("Sand", new Color(0.64f, 0.72f, 0.63f), 1.8f);
+            AddSandGrain(regenerate: true);
+            Surface("Limestone", new Color(0.37f, 0.45f, 0.41f), 0.38f);
             Surface("FireCoral", new Color(0.61f, 0.32f, 0.18f), 0.08f);
             Surface("LavenderCoral", new Color(0.39f, 0.30f, 0.40f), 0.08f);
             Surface("PlateCoral", new Color(0.40f, 0.43f, 0.34f), 0.10f);
             SetTint("Seagrass", new Color(0.22f, 0.34f, 0.27f));
-            SetTint("Water", new Color(0.06f, 0.36f, 0.56f));
+            SetTint("Water", new Color(0.06f, 0.41f, 0.51f));
             var water = AssetDatabase.LoadAssetAtPath<Material>(Generated + "Water.mat");
-            water.SetColor("_TransmissionColor", new Color(0.28f, 0.59f, 0.78f));
+            water.SetColor("_TransmissionColor", new Color(0.28f, 0.65f, 0.72f));
             water.SetColor("_ReflectionColor", new Color(0.85f, 1.05f, 1.15f));
             water.SetFloat("_ReflectionStrength", 1.4f);
             water.SetFloat("_WaveScale", 1.15f);
@@ -90,10 +90,10 @@ namespace Reefkeeper.Editor
             material.SetColor("_BaseColor", tint); EditorUtility.SetDirty(material);
         }
 
-        static void AddSandGrain()
+        static void AddSandGrain(bool regenerate = false)
         {
             const string path = Generated + "NurserySandGrain.png";
-            if (!File.Exists(path))
+            if (regenerate || !File.Exists(path))
             {
                 const int size = 512;
                 var texture = new Texture2D(size, size, TextureFormat.RGB24, false);
@@ -104,7 +104,9 @@ namespace Reefkeeper.Editor
                     float ripple = Mathf.Sin((v * 14 + Mathf.Sin(u * Mathf.PI * 2) * 0.24f) * Mathf.PI * 2);
                     float broad = TileNoise(u, v, 8) * 0.6f + TileNoise(u, v, 32) * 0.4f;
                     float grain = Hash(x, y);
-                    float value = 0.70f + broad * 0.18f + grain * 0.08f + ripple * 0.035f;
+                    // Keep the mean sand brightness, but let moving sunlight read
+                    // above the much quieter static grain and sediment ripples.
+                    float value = 0.755f + broad * 0.10f + grain * 0.045f + ripple * 0.006f;
                     pixels[y * size + x] = new Color(value, value, value);
                 }
                 texture.SetPixels(pixels); texture.Apply(); File.WriteAllBytes(path, texture.EncodeToPNG()); Object.DestroyImmediate(texture);
@@ -116,6 +118,9 @@ namespace Reefkeeper.Editor
             var sand = AssetDatabase.LoadAssetAtPath<Material>(Generated + "Sand.mat");
             sand.SetTexture("Texture2D_D71B5CBC", AssetDatabase.LoadAssetAtPath<Texture2D>(path));
             sand.SetVector("Vector4_47405F4E", new Vector4(44, 44, 0, 0));
+            sand.SetFloat("Vector1_810FF6ED", 1.0f); // Caustic Size 1: broader pattern.
+            sand.SetFloat("Vector1_DE7903F8", 1.25f); // Caustic Size 2.
+            sand.SetFloat("Vector1_994EA204", 4.2f); // Ripple Power: more focused highlights.
             EditorUtility.SetDirty(sand);
         }
         static float TileNoise(float u, float v, int cells)

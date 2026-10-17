@@ -48,10 +48,10 @@ Material:
     m_Floats:
     - Vector1_3E4E7F58: 15
     - Vector1_5443DC82: 1
-    - Vector1_810FF6ED: 1.2
-    - Vector1_994EA204: 3.5
+    - Vector1_810FF6ED: 1
+    - Vector1_994EA204: 4.2
     - Vector1_A8CC0681: 2
-    - Vector1_DE7903F8: 1.5
+    - Vector1_DE7903F8: 1.25
     - Vector1_E79FBA7D: 4
     - _Caustics: 0.95
     - _Cull: 2
@@ -61,7 +61,7 @@ Material:
     - _Sand: 1
     - _Sway: 0
     m_Colors:
-    - Color_2B7C42F7: {r: 0.70199996, g: 0.9, b: 0.837, a: 0.9}
+    - Color_2B7C42F7: {r: 1.4039999, g: 1.8, b: 1.674, a: 1.8}
     - Color_DB714CC1: {r: 0.64, g: 0.72, b: 0.63, a: 1}
     - Vector4_47405F4E: {r: 44, g: 44, b: 0, a: 0}
     - Vector4_85FB229A: {r: 0.08, g: 0.05, b: -0.04, a: 0.06}
