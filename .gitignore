@@ -1,0 +1,10 @@
+Reefkeeper/[Ll]ibrary/
+Reefkeeper/[Tt]emp/
+Reefkeeper/[Oo]bj/
+Reefkeeper/[Ll]ogs/
+Reefkeeper/[Uu]ser[Ss]ettings/
+Reefkeeper/Builds/
+Reefkeeper/*.csproj
+Reefkeeper/*.sln*
+Reefkeeper/.vs/
+artifacts/
