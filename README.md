@@ -1,8 +1,8 @@
 # Reefkeeper — underwater prototype
 
-Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. If the scene has not been generated yet, choose **Reefkeeper → Create or rebuild shallow reef** in the Editor menu.
+Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline, XR Interaction Toolkit **3.3.2**. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. The saved scene starts at the nursery rack with the official XR Interaction Simulator active. No headset is required for this mode.
 
-![Milestone 03 — sculpted seabed rendered by the Windows prototype](docs/previews/milestone-03-terrain.png)
+![Milestone 04 — nursery workshop rendered by the Windows prototype](docs/previews/milestone-04-overview.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
 
@@ -10,7 +10,34 @@ Milestone 02: imported URP-WaterShaders with its original subgraph GUIDs, config
 
 Milestone 03: added a winding sand channel, raised banks and dunes, with a saved mesh collider; introduced a bilingual Editor art panel for lighting, materials and terrain parameters. Windows build and runtime checks, including descent onto the uneven seabed, pass. The palette and placeholder models remain ready for the user's art direction.
 
-## Controls
+Milestone 04: added Unity's XR Interaction Simulator, underwater XR Origin movement, a grabbable brush and a nursery rack with 24 cleanable patches. The Windows build and both runtime suites pass: simulated swimming/braking, keyboard grip and release, brush following, contact-based cleaning, completion, reset and mode switching. Screenshots below are engine renders with the HUD omitted. Headset and Rokoko input remain untested.
+
+![Brush close-up after cleaning the first crossbar](docs/previews/milestone-04-brushing.png)
+
+| Before cleaning | After cleaning |
+| --- | --- |
+| ![Dirty rack](docs/previews/milestone-04-before.png) | ![Clean rack](docs/previews/milestone-04-after.png) |
+
+## XR simulator and rack cleaning
+
+The official simulator drives tracked head/controller input. The brush is an `XRGrabInteractable`; cleaning uses bristle contact and swept distance against 24 algae patches. Holding the brush still, waving it in the air, or moving it while unheld does not clean the rack. Clean patches expose the underlying rack; the HUD reports total progress.
+
+| Input | Action |
+| --- | --- |
+| Tab | Cycle between body/FPS and device manipulation modes |
+| `[` / `]` | Select the left / right controller for manipulation |
+| Mouse | Rotate the active head/controller; right-click toggles mouse capture |
+| WASD, Q / E | Move the body in FPS mode, or the selected controller in device mode |
+| Shift / B | Boost / brake while swimming in FPS mode |
+| Hold G | Grip with the selected controller; release G to drop |
+| F5 | Restore dirty patches and return the brush to its tray |
+| F2 | Switch between XR simulation and the original desktop swimmer |
+
+Start by aiming the right controller at the brush on the tray, then hold **G**. In device mode, move the brush with **WASD + Q/E**; rotate it until the bristles face down, touch a dirty crossbar and sweep sideways. Keep G held while brushing. The simulator's own on-screen panel exposes additional controls. Repeated bracket presses can switch device types; this prototype is configured and tested for controller simulation, not optical hand tracking.
+
+The simulator remains explicitly included in Windows builds. Hardware XR/OpenXR provider setup, stereo rendering, headset performance, headset comfort and Rokoko live input are not validated. The screen-space HUD is for the laptop demo. Keyboard simulation and recorded/synthetic poses must not be presented as live glove tracking.
+
+## Desktop controls (F2)
 
 | Input | Action |
 | --- | --- |
@@ -23,7 +50,7 @@ Milestone 03: added a winding sand channel, raised banks and dunes, with a saved
 | R | Reset to the starting point |
 | Esc / left click | Release cursor / resume |
 
-No gravity, head bob, camera roll or sprint FOV changes. Change the public settings on **Diver / desktop input → DiveMotor** to tune the feel. This is currently a desktop prototype, not a validated VR build. Glove capture and live input are not connected yet.
+No gravity, head bob, camera roll or sprint FOV changes in desktop swimming. Change the public settings on **Diver / desktop input → DiveMotor** to tune the feel. `ReefXRSwim` moves the XR Origin with its own collider in simulator FPS mode; independent controller positioning remains the official simulator's responsibility.
 
 ## Editing the look and terrain
 
@@ -44,7 +71,7 @@ The seabed is a mesh with smooth sand banks, dunes and a winding trough, not Uni
 - Small depth/speed display and keyboard hints.
 - Editable source assets and a reproducible scene builder. Generated assets live in `Assets/Reefkeeper/Generated`; save a copy of the scene before rebuilding if you have edited it by hand.
 
-Next: cleaning coral racks with a brush and placing nursery fragments. Swimming motion capture is optional polish after the interaction loop works. A current-meter prop is an optional later interaction.
+The nursery rack is a replaceable placeholder. Keep the interaction components/contact points when replacing its visual meshes with reference-based art. Next: placing nursery fragments. Swimming motion capture is optional polish. A current-meter prop is an optional later interaction.
 
 ## Mocap capture while the loaner gloves are available
 
@@ -64,6 +91,14 @@ Reefkeeper.exe -reef-smoke <absolute-output-directory> -screen-width 1600 -scree
 
 Build with `Reefkeeper.Editor.ReefSceneBuilder.BuildWindows` through Unity's `-executeMethod`, or the normal Windows Build Profiles workflow. Outputs are local under `Reefkeeper/Builds/Windows` and are not committed.
 
+The opt-in XR check uses simulated keyboard actions for swimming, controller translation, grip and release, then replays precise tracked-controller poses to sweep each dirt patch. It checks stationary contact, air strokes, unheld motion, completion, reset and switching modes, and captures an overview, a brush close-up and before/after images:
+
+```text
+Reefkeeper.exe -reef-xr-smoke <absolute-output-directory> -screen-width 1600 -screen-height 900 -windowed
+```
+
 ## Credits
 
-Unity's bundled Universal 3D template supplies the URP render settings. Reef geometry, movement, interface and supporting shaders were authored during this hackathon with Codex assistance. Underwater Shader Graphs are by **aniruddhahar**, [URP-WaterShaders](https://github.com/aniruddhahar/URP-WaterShaders), MIT, pinned to `1d18105ab76f894e3187d32bb4e412dbcb35df2c`. Source, license and integration notes are in `Reefkeeper/Assets/ThirdParty/URP-WaterShaders`; the license is also copied alongside Windows builds. No downloaded third-party models, textures or sound clips are currently used.
+Unity's bundled Universal 3D template supplies the URP render settings. Reef geometry, movement, interface and supporting shaders were authored during this hackathon with Codex assistance. Underwater Shader Graphs are by **aniruddhahar**, [URP-WaterShaders](https://github.com/aniruddhahar/URP-WaterShaders), MIT, pinned to `1d18105ab76f894e3187d32bb4e412dbcb35df2c`. Source, license and integration notes are in `Reefkeeper/Assets/ThirdParty/URP-WaterShaders`; the license is also copied alongside Windows builds.
+
+XR rig, controller models, input actions and simulator assets come from Unity's **XR Interaction Toolkit 3.3.2** samples, under the Unity Companion License; see `Reefkeeper/Assets/Samples/XRI-LICENSE.md`. Sample controller materials are overridden with project URP materials. This is the first imported model/UI asset set; the underwater reef and nursery props remain project-authored placeholders.

@@ -34,7 +34,7 @@ namespace Reefkeeper
             string state = diver.Braking ? "BRAKING" : diver.Sprinting ? "FIN KICK / BOOST" : "NEUTRAL BUOYANCY";
             GUI.Label(new Rect(38, h - 78, 400, 24), state, small);
             GUI.Label(new Rect(38, h - 48, w - 60, 26),
-                "WASD  swim     SPACE / C  rise / descend     SHIFT  boost     RMB / X  brake     R  reset     ESC  release cursor", hint);
+                "WASD swim   SPACE / C rise / descend   SHIFT boost   RMB / X brake   R reset   ESC cursor   F2 XR workshop", hint);
             GUI.color = new Color(0.85f, 1, 0.94f, 0.6f);
             GUI.DrawTexture(new Rect(w / 2 - 1.5f, h / 2 - 1.5f, 3, 3), pixel);
             GUI.color = Color.white;

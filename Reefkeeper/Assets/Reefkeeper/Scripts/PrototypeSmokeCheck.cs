@@ -68,7 +68,7 @@ namespace Reefkeeper
             Application.Quit(0);
         }
 
-        static void Capture(Camera camera, string path)
+        public static void Capture(Camera camera, string path)
         {
             // Explicit render target also works when Windows keeps the test window hidden.
             var target = new RenderTexture(1600, 900, 24, RenderTextureFormat.ARGB32);

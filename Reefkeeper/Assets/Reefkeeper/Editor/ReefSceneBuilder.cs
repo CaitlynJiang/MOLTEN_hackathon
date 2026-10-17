@@ -241,6 +241,7 @@ namespace Reefkeeper.Editor
             if (result.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 throw new Exception("Windows build failed: " + result.summary.result);
             File.Copy("Assets/ThirdParty/URP-WaterShaders/LICENSE.txt", "Builds/Windows/URP-WaterShaders-LICENSE.txt", true);
+            if (File.Exists("Assets/Samples/XRI-LICENSE.md")) File.Copy("Assets/Samples/XRI-LICENSE.md", "Builds/Windows/XRI-LICENSE.md", true);
             Debug.Log("REEFKEEPER_BUILD_PASSED");
         }
 
