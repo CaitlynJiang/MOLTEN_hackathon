@@ -2,7 +2,7 @@
 
 Unity **6.3 LTS / 6000.3.19f1**, Universal Render Pipeline, XR Interaction Toolkit **3.3.2**. Open the `Reefkeeper` folder in Unity Hub, then open `Assets/Reefkeeper/Scenes/ShallowReef.unity` and press Play. The saved scene starts at the nursery rack with the official XR Interaction Simulator active. No headset is required for this mode.
 
-![Milestone 06 — blue water and a tiered coral nursery](docs/previews/milestone-06-nursery.png)
+![Milestone 07 — brighter water and a softly green seabed](docs/previews/milestone-07-nursery.png)
 
 Milestone 01: Windows build succeeds; movement math and runtime movement/collision checks pass. Three offscreen scene renders were captured for visual review (HUD is not part of those renders). These are procedural prototype assets; underwater materials and art can be replaced independently.
 
@@ -16,7 +16,9 @@ Milestone 05: imported Quaternius's seven animated fish models with separate URP
 
 Milestone 06: used the supplied photographic mood board to shift the water toward blue, soften caustics, introduce fine sand/ripple texture and replace the table-shaped rack with a three-tier coral nursery. The nursery has slender stems, open lattice trays, suspended branching fragments, buoyancy floats and seabed tethers. Its 24 cleanable patches sit along the three front rims; three additional trees establish the nursery setting. Quaternius fish models, materials and animations retain their existing style. The Windows build and XR interaction checks pass, including all 24 patches, completion and reset; three art views were rendered and visually reviewed.
 
-![Nursery frame and suspended fragments](docs/previews/milestone-06-detail.png)
+Milestone 07: brightened the underwater palette with slightly warm daylight, lighter shadows and a subtle green tint near the sand. The water ceiling now uses irregular animated reflection patches and a brighter overhead color; its fog blending preserves those highlights. Surface reflection strength and ripple scale are editable material properties. The Windows build and shader compilation pass, and three matching art views were rendered for visual review. This pass changes lighting, grading and materials; the nursery geometry and Quaternius fish assets are unchanged.
+
+![Nursery frame and suspended fragments](docs/previews/milestone-07-detail.png)
 
 Earlier milestone 04 interaction views:
 
@@ -66,6 +68,7 @@ Open the **Art controls** panel from the **Reefkeeper** menu with `ShallowReef` 
 
 - Water color, visibility, sunlight, exposure and saturation preview immediately. Enable Scene view effects/fog/post-processing, or use Game view, to see the complete look.
 - Select a material button to edit its normal Inspector, including Tint, Main Texture and Caustic Color. These are shared materials; duplicate and assign a material to a particular object if it should have its own look.
+- Open `Assets/Reefkeeper/Generated/Water.mat` to adjust **Daylight through water**, **Broken sky reflections**, **Reflection strength** and **Ripple scale**. A smaller ripple scale makes broader patches. This lightweight ceiling shader gives an underwater impression of the surface; it does not simulate refraction of above-water objects.
 - Adjust bank height, dunes, channel depth and detail, then use the apply-terrain button. This replaces only the seabed mesh/collider and moves registered props by the change in ground elevation; it preserves their placement offsets, materials and object identities. Undo is supported. Grounded prop references live on the seabed's `ReefSeabed` component; register new prop roots without also registering their children.
 - Use the save-materials-and-scene button to save everything. Edits made during Play are disabled in this panel. **Create or rebuild shallow reef** is the original full generator and resets the scene; avoid it when working on your own art/layout. **BuildWindows** builds the saved scene without regenerating it.
 

@@ -36,36 +36,43 @@ namespace Reefkeeper.Editor
         {
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.025f, 0.27f, 0.41f);
-            RenderSettings.fogStartDistance = 2;
-            RenderSettings.fogEndDistance = 43;
+            RenderSettings.fogColor = new Color(0.055f, 0.36f, 0.46f);
+            RenderSettings.fogStartDistance = 3;
+            RenderSettings.fogEndDistance = 48;
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.35f, 0.46f, 0.56f);
-            RenderSettings.ambientEquatorColor = new Color(0.15f, 0.26f, 0.34f);
-            RenderSettings.ambientGroundColor = new Color(0.065f, 0.11f, 0.16f);
-            RenderSettings.sun.color = new Color(0.93f, 0.96f, 1);
-            RenderSettings.sun.intensity = 1.75f;
-            RenderSettings.sun.shadowStrength = 0.65f;
+            RenderSettings.ambientSkyColor = new Color(0.43f, 0.63f, 0.72f);
+            RenderSettings.ambientEquatorColor = new Color(0.17f, 0.37f, 0.38f);
+            RenderSettings.ambientGroundColor = new Color(0.09f, 0.23f, 0.19f);
+            RenderSettings.sun.color = new Color(1, 0.96f, 0.86f);
+            RenderSettings.sun.intensity = 2;
+            RenderSettings.sun.shadowStrength = 0.58f;
             foreach (var camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 camera.backgroundColor = RenderSettings.fogColor;
-            Surface("Sand", new Color(0.72f, 0.69f, 0.62f), 0.65f);
+            Surface("Sand", new Color(0.64f, 0.72f, 0.63f), 0.9f);
             AddSandGrain();
-            Surface("Limestone", new Color(0.39f, 0.41f, 0.41f), 0.24f);
+            Surface("Limestone", new Color(0.37f, 0.45f, 0.41f), 0.28f);
             Surface("FireCoral", new Color(0.61f, 0.32f, 0.18f), 0.08f);
             Surface("LavenderCoral", new Color(0.39f, 0.30f, 0.40f), 0.08f);
             Surface("PlateCoral", new Color(0.40f, 0.43f, 0.34f), 0.10f);
-            SetTint("Seagrass", new Color(0.22f, 0.31f, 0.27f));
-            SetTint("Water", new Color(0.08f, 0.35f, 0.49f));
-            SetTint("Sunbeams", new Color(0.42f, 0.66f, 0.88f, 0.038f));
+            SetTint("Seagrass", new Color(0.22f, 0.34f, 0.27f));
+            SetTint("Water", new Color(0.06f, 0.36f, 0.56f));
+            var water = AssetDatabase.LoadAssetAtPath<Material>(Generated + "Water.mat");
+            water.SetColor("_TransmissionColor", new Color(0.28f, 0.59f, 0.78f));
+            water.SetColor("_ReflectionColor", new Color(0.85f, 1.05f, 1.15f));
+            water.SetFloat("_ReflectionStrength", 1.4f);
+            water.SetFloat("_WaveScale", 1.15f);
+            water.SetVector("_SunDirection", -RenderSettings.sun.transform.forward);
+            EditorUtility.SetDirty(water);
+            SetTint("Sunbeams", new Color(0.68f, 0.85f, 0.82f, 0.045f));
             var profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(Generated + "UnderwaterGrade.asset");
             if (profile.TryGet<ColorAdjustments>(out var grading))
             {
-                grading.postExposure.Override(0);
+                grading.postExposure.Override(0.35f);
                 grading.contrast.Override(7);
-                grading.saturation.Override(-5);
+                grading.saturation.Override(0);
                 EditorUtility.SetDirty(grading);
             }
-            if (profile.TryGet<Bloom>(out var bloom)) { bloom.intensity.Override(0.08f); EditorUtility.SetDirty(bloom); }
+            if (profile.TryGet<Bloom>(out var bloom)) { bloom.intensity.Override(0.13f); EditorUtility.SetDirty(bloom); }
             if (profile.TryGet<Vignette>(out var vignette)) { vignette.intensity.Override(0.12f); EditorUtility.SetDirty(vignette); }
         }
 
@@ -74,7 +81,7 @@ namespace Reefkeeper.Editor
             var material = AssetDatabase.LoadAssetAtPath<Material>(Generated + name + ".mat");
             material.SetColor("_BaseColor", tint);
             material.SetColor("Color_DB714CC1", tint);
-            material.SetColor("Color_2B7C42F7", new Color(0.7f, 0.87f, 1) * caustics);
+            material.SetColor("Color_2B7C42F7", new Color(0.78f, 1, 0.93f) * caustics);
             EditorUtility.SetDirty(material);
         }
         static void SetTint(string name, Color tint)

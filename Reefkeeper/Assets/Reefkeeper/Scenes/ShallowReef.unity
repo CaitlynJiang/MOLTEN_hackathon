@@ -15,14 +15,14 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.025, g: 0.27, b: 0.41, a: 1}
+  m_FogColor: {r: 0.055, g: 0.36, b: 0.46, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 2
-  m_LinearFogEnd: 43
-  m_AmbientSkyColor: {r: 0.35, g: 0.46, b: 0.56, a: 1}
-  m_AmbientEquatorColor: {r: 0.15, g: 0.26, b: 0.34, a: 1}
-  m_AmbientGroundColor: {r: 0.065, g: 0.11, b: 0.16, a: 1}
+  m_LinearFogStart: 3
+  m_LinearFogEnd: 48
+  m_AmbientSkyColor: {r: 0.43, g: 0.63, b: 0.72, a: 1}
+  m_AmbientEquatorColor: {r: 0.17, g: 0.37, b: 0.38, a: 1}
+  m_AmbientGroundColor: {r: 0.09, g: 0.23, b: 0.19, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -17898,8 +17898,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.93, g: 0.96, b: 1, a: 1}
-  m_Intensity: 1.75
+  m_Color: {r: 1, g: 0.96, b: 0.86, a: 1}
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -17908,7 +17908,7 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.65
+    m_Strength: 0.58
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
@@ -26567,7 +26567,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.025, g: 0.27, b: 0.41, a: 1}
+  m_BackGroundColor: {r: 0.055, g: 0.36, b: 0.46, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -51178,15 +51178,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_BackGroundColor.b
-      value: 0.41
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_BackGroundColor.g
-      value: 0.27
+      value: 0.36
       objectReference: {fileID: 0}
     - target: {fileID: 1767192439, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_BackGroundColor.r
-      value: 0.025
+      value: 0.055
       objectReference: {fileID: 0}
     - target: {fileID: 226602743279498102, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
