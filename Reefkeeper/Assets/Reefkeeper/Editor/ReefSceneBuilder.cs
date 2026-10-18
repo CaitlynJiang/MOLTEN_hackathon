@@ -244,6 +244,8 @@ namespace Reefkeeper.Editor
             if (File.Exists("Assets/Samples/XRI-LICENSE.md")) File.Copy("Assets/Samples/XRI-LICENSE.md", "Builds/Windows/XRI-LICENSE.md", true);
             if (File.Exists("Assets/ThirdParty/QuaterniusAnimatedFish/License.txt"))
                 File.Copy("Assets/ThirdParty/QuaterniusAnimatedFish/License.txt", "Builds/Windows/Quaternius-Fish-LICENSE.txt", true);
+            if (File.Exists("Assets/UI/Fonts/Nunito/OFL.txt"))
+                File.Copy("Assets/UI/Fonts/Nunito/OFL.txt", "Builds/Windows/Nunito-OFL.txt", true);
             Debug.Log("REEFKEEPER_BUILD_PASSED");
         }
 

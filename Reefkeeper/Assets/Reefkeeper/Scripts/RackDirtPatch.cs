@@ -13,6 +13,9 @@ namespace Reefkeeper
         Vector3 originalScale;
         Color dirtColor;
         Vector3[] growthScale;
+        Vector3[] growthOnCoating;
+        Bounds coatingBounds;
+        Vector2 edgeFeather;
 
         void Awake()
         {
@@ -20,7 +23,15 @@ namespace Reefkeeper
             dirtColor = dirtVisual.sharedMaterial.GetColor("_BaseColor");
             properties = new MaterialPropertyBlock();
             growthScale = new Vector3[growth.Length];
-            for (int i = 0; i < growth.Length; i++) growthScale[i] = growth[i].localScale;
+            growthOnCoating = new Vector3[growth.Length];
+            coatingBounds = dirtVisual.localBounds;
+            var worldScale = dirtVisual.transform.lossyScale;
+            edgeFeather = new Vector2(0.025f / Mathf.Max(0.001f, Mathf.Abs(worldScale.x)), 0.025f / Mathf.Max(0.001f, Mathf.Abs(worldScale.z)));
+            for (int i = 0; i < growth.Length; i++)
+            {
+                growthScale[i] = growth[i].localScale;
+                growthOnCoating[i] = dirtVisual.transform.InverseTransformPoint(growth[i].position);
+            }
         }
         public void ApplyStroke(float tangentDistance)
         {
@@ -35,17 +46,23 @@ namespace Reefkeeper
             if (!dirtVisual) return;
             dirtVisual.enabled = !Complete;
             var scale = originalScale;
-            scale.x *= Mathf.Lerp(1, 0.08f, Cleaned);
-            scale.z *= Mathf.Lerp(1, 0.25f, Cleaned);
+            float width = Mathf.Lerp(1, 0.08f, Cleaned), depth = Mathf.Lerp(1, 0.25f, Cleaned);
+            scale.x *= width;
+            scale.z *= depth;
             dirtVisual.transform.localScale = scale;
             properties ??= new MaterialPropertyBlock();
             properties.SetColor("_BaseColor", Color.Lerp(dirtColor, dirtColor * 1.15f, Cleaned));
             dirtVisual.SetPropertyBlock(properties);
             for (int i = 0; i < growth.Length; i++)
             {
-                float remaining = Mathf.Clamp01((1 - Cleaned) * growth.Length - i);
+                // The roots stay on the rack. Remove tufts as the shrinking coating edge reaches them,
+                // using their position rather than their randomized creation order.
+                var root = growthOnCoating[i];
+                float edgeX = coatingBounds.extents.x * width - Mathf.Abs(root.x - coatingBounds.center.x * width);
+                float edgeZ = coatingBounds.extents.z * depth - Mathf.Abs(root.z - coatingBounds.center.z * depth);
+                float remaining = Complete ? 0 : Cleaned == 0 ? 1 : Mathf.Clamp01(Mathf.Min(edgeX / edgeFeather.x, edgeZ / edgeFeather.y));
                 growth[i].gameObject.SetActive(remaining > 0.01f);
-                growth[i].localScale = growthScale[i] * Mathf.Lerp(0.15f, 1, remaining);
+                growth[i].localScale = growthScale[i] * remaining;
             }
         }
     }

@@ -26,7 +26,6 @@ namespace Reefkeeper
         Transform holdParent;
         Camera previousView;
         bool clearing, pendingHold;
-        GUIStyle prompt, hint;
         struct Home
         {
             public ReefCoralFragment template;
@@ -164,16 +163,6 @@ namespace Reefkeeper
                 if (fragment.suspensionLine) fragment.suspensionLine.SetActive(true);
                 fragments[i] = fragment;
             }
-        }
-        void OnGUI()
-        {
-            prompt ??= new GUIStyle(GUI.skin.box) { fontSize = 19, alignment = TextAnchor.MiddleCenter };
-            hint ??= new GUIStyle(GUI.skin.label) { fontSize = 14, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
-            float x = Screen.width * 0.5f, y = Screen.height * 0.5f;
-            if (HasPrompt) GUI.Box(new Rect(x - 150, y + 36, 300, 38), Held ? "[G] Grab coral / replace held" : "[G] Grab coral", prompt);
-            if (Held) GUI.Label(new Rect(x - 200, Screen.height - 100, 400, 26), "Coral held 1 / 1  |  Next grab replaces it  |  F5 reset", hint);
-            if (workshop.xrGroup.activeSelf && simulator && simulator.manipulatingFPS)
-                GUI.DrawTexture(new Rect(x - 2, y - 2, 4, 4), Texture2D.whiteTexture);
         }
     }
 }

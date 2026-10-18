@@ -24,6 +24,10 @@ Milestone 09: added F11 borderless fullscreen and resizable windows, plus 84 gra
 
 Milestone 10: focused cleaning on one attached-algae spot, with white brush pickup feedback, persistent G pickup, hold-LMB scrub animation and a progress bar. Cleaning removes the coating and fronds progressively; H returns the tool and F5 restores the practice setup. Added two user-provided looping audio tracks with ambience emphasized over music. Windows build, the complete keyboard/mouse cleaning loop, audio playback state, native XR brush/swimming and coral pickup/fullscreen regressions pass. Headset and glove input remain untested.
 
+Milestone 11: integrated the supplied original UI shapes with Nunito SemiBold/Bold, warm cream text and dark blue-gray panels. Cleaning uses an aligned arc track and tinted fill with a moving round cap. One context hint replaces the overlapping prompts; F1 opens controls and O folds objectives. A screen overlay keeps the interface clear of underwater distortion. Completion fades out and automatically folds the objective. Algae now clears from the receding coating edges inward, and a soft warm light marks the practice spot.
+
+The Windows build and the complete desktop cleaning check pass, including asset/font references, F1/O toggles, pickup, occlusion/range rejection, physical brush motion, spatial growth removal, pause/resume, completion hiding, tool exchange and reset. The screenshots are captured from the visible player after rendering the HUD. Run the cleaning check in a visible window so Unity can capture the screen overlay.
+
 ![Nursery frame and suspended fragments](docs/previews/milestone-08-detail.png)
 
 Earlier milestone 04 interaction views:
@@ -40,11 +44,13 @@ The official simulator drives tracked head/controller input. The brush is an `XR
 
 For the laptop demo, use body/FPS mode or press **F2** for desktop controls. Aim at the brush on the small tray: its edges turn white and **[G] Pick up brush** appears. Tap G once to keep it in hand. Move within 1.35 metres of the algae and aim at it, then **hold LMB**. The brush makes small lateral and fore/aft strokes on the surface; actual bristle travel drives the progress bar. Release LMB to pause, then resume without losing progress. **H** returns the brush to the tray; **F5** resets the practice spot and tools. Switching camera modes also returns the brush. Grabbing a coral returns the brush, and grabbing the brush clears the held coral.
 
+Algae tufts shrink away as the coating's edges recede inward, based on their positions rather than creation order. A soft, slightly warm point light helps the practice spot read. Completion feedback stays for 1.2 seconds, fades over 0.6 seconds, then stays hidden even when the brush remains held or the completed spot is targeted again. Resetting restores the growth and progress UI. The task light is editable under **Practice spot / attached algae → Soft task light**.
+
 | Brush pickup | Cleaning in progress | Completed |
 | --- | --- | --- |
-| ![Brush pickup](docs/previews/milestone-10-brush.png) | ![Cleaning progress](docs/previews/milestone-10-cleaning.png) | ![Clean nursery rim](docs/previews/milestone-10-complete.png) |
+| ![Brush pickup](docs/previews/milestone-11-brush.png) | ![Cleaning progress](docs/previews/milestone-11-cleaning.png) | ![Clean nursery rim after feedback fades](docs/previews/milestone-11-clean.png) |
 
-These engine captures include the cleaning Canvas UI. Legacy movement/simulator overlays are omitted from the offscreen renders.
+These engine captures include the complete laptop HUD. The duplicate movement, inventory and simulator overlays have been removed. Controls start folded; press **F1** to open them. Press **O** to fold or expand the single objective.
 
 | Input | Action |
 | --- | --- |
@@ -60,14 +66,16 @@ These engine captures include the cleaning Canvas UI. Legacy movement/simulator 
 | F5 | Restore dirty patches, brush and all nursery fragments |
 | F2 | Switch between XR simulation and the original desktop swimmer |
 | F11 | Toggle borderless fullscreen / original window size |
+| F1 | Open / close controls |
+| O | Fold / expand objectives |
 
-For manual controller practice, select the right controller with **]**, aim at the brush on the tray, then hold **G**. In device mode, move the brush with **WASD + Q/E**; rotate it until the bristles face down, touch the dirty rim and sweep sideways. Keep G held while brushing. The simulator's own on-screen panel exposes additional controls. Repeated bracket presses can switch device types; this prototype is configured for controller simulation, not optical hand tracking.
+For manual controller practice, select the right controller with **]**, aim at the brush on the tray, then hold **G**. In device mode, move the brush with **WASD + Q/E**; rotate it until the bristles face down, touch the dirty rim and sweep sideways. Keep G held while brushing. F1 shows controls for the current mode. Repeated bracket presses can switch device types; this prototype is configured for controller simulation, not optical hand tracking.
 
 The simulator remains explicitly included in Windows builds. Hardware XR/OpenXR provider setup, stereo rendering, headset performance, headset comfort and Rokoko live input are not validated. The screen-space HUD is for the laptop demo. Keyboard simulation and recorded/synthetic poses must not be presented as live glove tracking.
 
 ## Coral pickup and fullscreen
 
-For the simplest laptop check, press **F2**, click to capture the mouse, swim close to a hanging fragment and aim the center dot at it. Its edges light up bright white and **[G] Grab coral** appears within 3 metres of unobstructed view. Tap **G** to pick it up; it stays at the lower right of the view after releasing the key. Aim at another fragment and tap G again to replace it. The previous held GameObject is destroyed, and its former suspension line stays hidden until reset. Pressing G with no target keeps the current coral.
+For the simplest laptop check, press **F2**, click to capture the mouse, swim close to a hanging fragment and aim the center dot at it. Its edges light up bright white and **G Pick up coral** appears within 3 metres of unobstructed view. Tap **G** to pick it up; it stays at the lower right of the view after releasing the key. Aim at another fragment and tap G again to replace it. The previous held GameObject is destroyed, and its former suspension line stays hidden until reset. Pressing G with no target keeps the current coral.
 
 The XR simulator's body/FPS mode also supports center aiming and G. Center aim takes priority in this mode, so the same key cannot also pick a different coral with the simulated controller. In controller mode, use the existing controller ray or direct grip: native selection transfers to the same persistent hand slot when grip is released. Only one coral is retained across both hands and camera modes. Grabbing the brush clears the held coral; picking coral returns the brush to its rest. **F5** resets the brush, dirt, every fragment and suspension line. Coral placement is not implemented yet.
 
@@ -77,7 +85,7 @@ The XR simulator's body/FPS mode also supports center aiming and G. Center aim t
 | --- | --- |
 | ![Highlighted coral](docs/previews/milestone-09-highlight.png) | ![Held coral](docs/previews/milestone-09-held.png) |
 
-These engine views omit the HUD; the G prompt and inventory hint appear during normal play.
+These older engine views omit the HUD; the current HUD shows a single contextual pickup or replacement hint during play.
 
 ## Desktop controls (F2)
 
@@ -119,6 +127,10 @@ The current nursery uses simple project-authored geometry based on the supplied 
 ## Soundscape
 
 The two user-provided tracks play continuously as 2D loops: `Assets/Audio/Ambience/amb_underwater_loop.wav` at **0.75** volume and `Assets/Audio/Music/bgm_dream_culture.mp3` at **0.15**. The source recordings are unchanged; no trimming, effects or crossfades are applied. Unity streams them during playback. Select **WORKSHOP / coral nursery maintenance → ReefSoundscape** to adjust the two volume fields or replace the clips. Track provenance/licensing information was not included with the supplied files.
+
+New interface assets can be placed in `Assets/UI`; interaction sound cues belong in `Assets/Audio/SFX`. Include source/license notes with supplied assets.
+
+The supplied original UI artwork is imported under `Assets/UI/Shapes`. Both arc sprites retain their full 512px canvas and share the same runtime rect. `Reefkeeper/UI Arc Progress` reveals the tinted layer from bottom to top and preserves its round moving end. The hint panel uses sliced borders of 80 / 52 / 80 / 52 pixels (left / bottom / right / top), with independent text. Nunito SemiBold and Bold live under `Assets/UI/Fonts/Nunito`, with their SIL Open Font License and source notes. `ReefCleaningHUD` owns the laptop interface; `ReefCleaningBuilder.PolishAndBuild` reapplies its import settings and references to the saved scene.
 
 ## Animated fish
 

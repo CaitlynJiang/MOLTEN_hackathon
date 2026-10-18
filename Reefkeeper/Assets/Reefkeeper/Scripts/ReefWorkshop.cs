@@ -11,7 +11,6 @@ namespace Reefkeeper
         public ReefBrush brush;
         public RackDirtPatch[] patches;
         public Transform brushHome;
-        GUIStyle text, title;
         public float Progress
         {
             get { float total = 0; foreach (var patch in patches) total += patch.Cleaned; return patches.Length > 0 ? total / patches.Length : 0; }
@@ -59,19 +58,6 @@ namespace Reefkeeper
         {
             var grab = brush.GetComponent<XRGrabInteractable>();
             if (grab.isSelected) grab.interactionManager.CancelInteractableSelection((IXRSelectInteractable)grab);
-        }
-        void OnGUI()
-        {
-            if (!xrGroup.activeSelf) return;
-            text ??= new GUIStyle(GUI.skin.label) { fontSize = 15, normal = { textColor = Color.white } };
-            title ??= new GUIStyle(text) { fontSize = 23, fontStyle = FontStyle.Bold };
-            GUI.Box(new Rect(18, 16, 600, 175), GUIContent.none);
-            GUI.Label(new Rect(32, 27, 570, 32), "REEFKEEPER / NURSERY MAINTENANCE", title);
-            GUI.Label(new Rect(32, 63, 570, 24), "Practice spot: " + (Progress * 100).ToString("0") + "%   |   " +
-                (Progress > 0.999f ? "Clean! F5 to practice again" : brush.Held ? "Aim at the algae + hold LMB to scrub" : "Aim at the brush + tap G"), text);
-            GUI.Label(new Rect(32, 91, 570, 24), "TAB: body / devices    [ / ]: left / right    G: hold grip    RMB: mouse", text);
-            GUI.Label(new Rect(32, 116, 570, 24), "WASD + Q/E: move body or hand    B: brake    F2: desktop    F5: reset", text);
-            GUI.Label(new Rect(32, 141, 570, 24), "Coral: aim + tap G, one held at a time    F11: full screen", text);
         }
     }
 }

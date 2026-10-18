@@ -20,9 +20,5 @@ namespace Reefkeeper
                 Screen.SetResolution(Display.main.systemWidth, Display.main.systemHeight, FullScreenMode.FullScreenWindow);
             }
         }
-        void OnGUI()
-        {
-            GUI.Label(new Rect(Screen.width - 220, 8, 210, 24), Screen.fullScreen ? "F11: return to window" : "F11: full screen");
-        }
     }
 }

@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation;
 using Object = UnityEngine.Object;
 
 namespace Reefkeeper.Editor
@@ -14,6 +15,58 @@ namespace Reefkeeper.Editor
     {
         const string Generated = "Assets/Reefkeeper/Generated/";
         const string Maps = "Assets/ThirdParty/PolyHavenMossWood/";
+        public static void PolishAndBuild()
+        {
+            var scene = EditorSceneManager.OpenScene(ReefSceneBuilder.ScenePath);
+            var pickup = Object.FindFirstObjectByType<ReefBrushPickup>();
+            AddTaskLight(pickup.practiceSpot);
+            ConfigureHUD(pickup);
+            EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
+            ReefSceneBuilder.BuildWindows();
+        }
+        static void AddTaskLight(RackDirtPatch patch)
+        {
+            var existing = patch.transform.Find("Soft task light");
+            var light = existing ? existing.GetComponent<Light>() : new GameObject("Soft task light").AddComponent<Light>();
+            light.transform.SetParent(patch.transform, false);
+            light.transform.localPosition = new Vector3(-0.1f, 0.5f, -0.32f);
+            light.type = LightType.Point; light.color = new Color(1, 0.94f, 0.82f);
+            light.intensity = 0.7f; light.range = 1.6f; light.shadows = LightShadows.None;
+            light.renderMode = LightRenderMode.ForcePixel;
+        }
+        static void ConfigureHUD(ReefBrushPickup pickup)
+        {
+            var hud = pickup.GetComponent<ReefCleaningHUD>();
+            hud.font = AssetDatabase.LoadAssetAtPath<Font>("Assets/UI/Fonts/Nunito/Nunito-SemiBold.ttf");
+            hud.boldFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/UI/Fonts/Nunito/Nunito-Bold.ttf");
+            if (!hud.font || !hud.boldFont) throw new Exception("Nunito fonts missing");
+            hud.panelSprite = Sprite("hint_panel_white", new Vector4(80, 52, 80, 52));
+            hud.arcTrack = Sprite("arc_track", Vector4.zero);
+            hud.arcFill = Sprite("arc_fill_white", Vector4.zero);
+            const string materialPath = Generated + "UIArcProgress.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (!material) { material = new Material(Shader.Find("Reefkeeper/UI Arc Progress")); AssetDatabase.CreateAsset(material, materialPath); }
+            hud.arcMaterial = material;
+            foreach (var legacy in Object.FindObjectsByType<DiveHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None)) legacy.enabled = false;
+            var simulator = pickup.workshop.xrGroup.GetComponentInChildren<XRInteractionSimulator>(true);
+            simulator.interactionSimulatorUI = null;
+            EditorUtility.SetDirty(simulator);
+        }
+        static Sprite Sprite(string name, Vector4 border)
+        {
+            string path = "Assets/UI/Shapes/" + name + ".png";
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (!importer) throw new Exception("UI sprite missing: " + path);
+            importer.textureType = TextureImporterType.Sprite; importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spriteBorder = border; importer.spritePixelsPerUnit = 100;
+            importer.alphaIsTransparency = true; importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp; importer.filterMode = FilterMode.Bilinear;
+            importer.textureCompression = TextureImporterCompression.Uncompressed; importer.maxTextureSize = 1024;
+            var settings = new TextureImporterSettings(); importer.ReadTextureSettings(settings);
+            settings.spriteMeshType = SpriteMeshType.FullRect; settings.spritePivot = Vector2.one * 0.5f;
+            importer.SetTextureSettings(settings); importer.SaveAndReimport();
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
         public static void InstallAndBuild()
         {
             var scene = EditorSceneManager.OpenScene(ReefSceneBuilder.ScenePath);
@@ -70,7 +123,9 @@ namespace Reefkeeper.Editor
                 growth.Add(tuft.transform);
             }
             patch.growth = growth.ToArray(); workshop.patches = new[] { patch }; pickup.practiceSpot = patch;
+            AddTaskLight(patch);
             var hud = workshop.GetComponent<ReefCleaningHUD>(); if (!hud) hud = workshop.gameObject.AddComponent<ReefCleaningHUD>(); hud.pickup = pickup;
+            ConfigureHUD(pickup);
             if (!workshop.GetComponent<ReefCleaningSmokeCheck>()) workshop.gameObject.AddComponent<ReefCleaningSmokeCheck>();
             var audio = workshop.GetComponent<ReefSoundscape>(); if (!audio) audio = workshop.gameObject.AddComponent<ReefSoundscape>();
             audio.ambience = Audio("Assets/Audio/Ambience/amb_underwater_loop.wav");
