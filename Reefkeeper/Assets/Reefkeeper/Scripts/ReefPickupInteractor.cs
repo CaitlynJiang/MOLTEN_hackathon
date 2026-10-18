@@ -7,7 +7,7 @@ namespace Reefkeeper
     // A persistent hand slot that uses XRI selection, including for laptop input.
     public sealed class ReefPickupInteractor : XRBaseInteractor
     {
-        public ReefCoralFragment Requested { get; set; }
+        public XRGrabInteractable Requested { get; set; }
         public override bool isSelectActive => isPerformingManualInteraction;
         public override bool CanSelect(IXRSelectInteractable target) => ReferenceEquals(target, Requested);
         public override void GetValidTargets(List<IXRInteractable> targets)

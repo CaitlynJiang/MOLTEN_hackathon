@@ -20,7 +20,7 @@ namespace Reefkeeper
         {
             // Existing desktop checks can still run on the same scene.
             var args = System.Environment.GetCommandLineArgs();
-            bool desktopSmoke = System.Array.IndexOf(args, "-reef-smoke") >= 0 || System.Array.IndexOf(args, "-reef-pickup-smoke") >= 0;
+            bool desktopSmoke = System.Array.IndexOf(args, "-reef-smoke") >= 0 || System.Array.IndexOf(args, "-reef-pickup-smoke") >= 0 || System.Array.IndexOf(args, "-reef-cleaning-smoke") >= 0;
             xrGroup.SetActive(!desktopSmoke); desktopPlayer.SetActive(desktopSmoke);
         }
         void Update()
@@ -29,7 +29,7 @@ namespace Reefkeeper
             if (k == null) return;
             if (k.f2Key.wasPressedThisFrame)
             {
-                ReleaseBrush();
+                ReturnBrush();
                 bool xr = !xrGroup.activeSelf;
                 xrGroup.SetActive(xr); desktopPlayer.SetActive(!xr);
                 Cursor.lockState = xr ? CursorLockMode.None : CursorLockMode.Locked;
@@ -46,6 +46,8 @@ namespace Reefkeeper
         }
         public void ReturnBrush()
         {
+            var pickup = GetComponent<ReefBrushPickup>();
+            if (pickup) pickup.Release();
             ReleaseBrush();
             var body = brush.GetComponent<Rigidbody>();
             body.linearVelocity = Vector3.zero; body.angularVelocity = Vector3.zero;
@@ -65,8 +67,8 @@ namespace Reefkeeper
             title ??= new GUIStyle(text) { fontSize = 23, fontStyle = FontStyle.Bold };
             GUI.Box(new Rect(18, 16, 600, 175), GUIContent.none);
             GUI.Label(new Rect(32, 27, 570, 32), "REEFKEEPER / NURSERY MAINTENANCE", title);
-            GUI.Label(new Rect(32, 63, 570, 24), "Rack cleaned: " + (Progress * 100).ToString("0") + "%   |   " +
-                (Progress > 0.999f ? "Complete! F5 to practice again" : brush.Held ? brush.InContact ? "Brush contact - keep sweeping" : "Brush held - touch algae" : "Aim at the brush and hold G to grab"), text);
+            GUI.Label(new Rect(32, 63, 570, 24), "Practice spot: " + (Progress * 100).ToString("0") + "%   |   " +
+                (Progress > 0.999f ? "Clean! F5 to practice again" : brush.Held ? "Aim at the algae + hold LMB to scrub" : "Aim at the brush + tap G"), text);
             GUI.Label(new Rect(32, 91, 570, 24), "TAB: body / devices    [ / ]: left / right    G: hold grip    RMB: mouse", text);
             GUI.Label(new Rect(32, 116, 570, 24), "WASD + Q/E: move body or hand    B: brake    F2: desktop    F5: reset", text);
             GUI.Label(new Rect(32, 141, 570, 24), "Coral: aim + tap G, one held at a time    F11: full screen", text);

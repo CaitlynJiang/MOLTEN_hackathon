@@ -22,6 +22,8 @@ Milestone 08: shifted the water slightly toward green, reduced the contrast of s
 
 Milestone 09: added F11 borderless fullscreen and resizable windows, plus 84 grabbable nursery fragments. Aimed fragments show an edge outline and a G prompt. Picking another fragment destroys the previously held one; F5 restores the nursery. Laptop pickup uses an XRI selection hand slot, while simulator controllers can grab the same `XRGrabInteractable` objects directly. The Windows build, pickup/fullscreen runtime check and existing XR swimming/brush regression all pass, including cleaning all 24 patches.
 
+Milestone 10: focused cleaning on one attached-algae spot, with white brush pickup feedback, persistent G pickup, hold-LMB scrub animation and a progress bar. Cleaning removes the coating and fronds progressively; H returns the tool and F5 restores the practice setup. Added two user-provided looping audio tracks with ambience emphasized over music. Windows build, the complete keyboard/mouse cleaning loop, audio playback state, native XR brush/swimming and coral pickup/fullscreen regressions pass. Headset and glove input remain untested.
+
 ![Nursery frame and suspended fragments](docs/previews/milestone-08-detail.png)
 
 Earlier milestone 04 interaction views:
@@ -34,7 +36,15 @@ Earlier milestone 04 interaction views:
 
 ## XR simulator and rack cleaning
 
-The official simulator drives tracked head/controller input. The brush is an `XRGrabInteractable`; cleaning uses bristle contact and swept distance against 24 algae patches. Holding the brush still, waving it in the air, or moving it while unheld does not clean the rack. Clean patches expose the underlying rack; the HUD reports total progress.
+The official simulator drives tracked head/controller input. The brush is an `XRGrabInteractable`; cleaning uses bristle contact and swept distance. The current practice loop has **one algae-covered area on the middle front rim**. Holding the brush still, waving it in the air, or moving it while unheld does not clean. The attached coating and short fronds disappear progressively, exposing the frame underneath.
+
+For the laptop demo, use body/FPS mode or press **F2** for desktop controls. Aim at the brush on the small tray: its edges turn white and **[G] Pick up brush** appears. Tap G once to keep it in hand. Move within 1.35 metres of the algae and aim at it, then **hold LMB**. The brush makes small lateral and fore/aft strokes on the surface; actual bristle travel drives the progress bar. Release LMB to pause, then resume without losing progress. **H** returns the brush to the tray; **F5** resets the practice spot and tools. Switching camera modes also returns the brush. Grabbing a coral returns the brush, and grabbing the brush clears the held coral.
+
+| Brush pickup | Cleaning in progress | Completed |
+| --- | --- | --- |
+| ![Brush pickup](docs/previews/milestone-10-brush.png) | ![Cleaning progress](docs/previews/milestone-10-cleaning.png) | ![Clean nursery rim](docs/previews/milestone-10-complete.png) |
+
+These engine captures include the cleaning Canvas UI. Legacy movement/simulator overlays are omitted from the offscreen renders.
 
 | Input | Action |
 | --- | --- |
@@ -43,12 +53,15 @@ The official simulator drives tracked head/controller input. The brush is an `XR
 | Mouse | Rotate the active head/controller; right-click toggles mouse capture |
 | WASD, Q / E | Move the body in FPS mode, or the selected controller in device mode |
 | Shift / B | Boost / brake while swimming in FPS mode |
-| Hold G | Grip with the selected controller; release G to drop |
+| Tap G in body/FPS mode | Pick up the aimed brush or coral |
+| Hold LMB in body/FPS mode | Animate the held brush against the nearby algae |
+| H in body/FPS mode | Return the brush to its tray |
+| Hold G in controller mode | Grip with the selected controller; release G to drop the brush |
 | F5 | Restore dirty patches, brush and all nursery fragments |
 | F2 | Switch between XR simulation and the original desktop swimmer |
 | F11 | Toggle borderless fullscreen / original window size |
 
-Start by aiming the right controller at the brush on the tray, then hold **G**. In device mode, move the brush with **WASD + Q/E**; rotate it until the bristles face down, touch a dirty crossbar and sweep sideways. Keep G held while brushing. The simulator's own on-screen panel exposes additional controls. Repeated bracket presses can switch device types; this prototype is configured and tested for controller simulation, not optical hand tracking.
+For manual controller practice, select the right controller with **]**, aim at the brush on the tray, then hold **G**. In device mode, move the brush with **WASD + Q/E**; rotate it until the bristles face down, touch the dirty rim and sweep sideways. Keep G held while brushing. The simulator's own on-screen panel exposes additional controls. Repeated bracket presses can switch device types; this prototype is configured for controller simulation, not optical hand tracking.
 
 The simulator remains explicitly included in Windows builds. Hardware XR/OpenXR provider setup, stereo rendering, headset performance, headset comfort and Rokoko live input are not validated. The screen-space HUD is for the laptop demo. Keyboard simulation and recorded/synthetic poses must not be presented as live glove tracking.
 
@@ -103,6 +116,10 @@ The seabed is a mesh with smooth sand banks, dunes and a winding trough, not Uni
 
 The current nursery uses simple project-authored geometry based on the supplied reference photographs. Select **WORKSHOP / coral nursery maintenance → Nursery tree / interactive** to edit the working tree; additional trees live under **NURSERY / suspended coral trees**. Keep the interaction components/contact points when replacing its visual meshes. All four trees have grabbable hanging fragments; placing nursery fragments is the next interaction. Swimming motion capture and a current-meter prop remain optional later additions.
 
+## Soundscape
+
+The two user-provided tracks play continuously as 2D loops: `Assets/Audio/Ambience/amb_underwater_loop.wav` at **0.75** volume and `Assets/Audio/Music/bgm_dream_culture.mp3` at **0.15**. The source recordings are unchanged; no trimming, effects or crossfades are applied. Unity streams them during playback. Select **WORKSHOP / coral nursery maintenance → ReefSoundscape** to adjust the two volume fields or replace the clips. Track provenance/licensing information was not included with the supplied files.
+
 ## Animated fish
 
 Quaternius's CC0 Animated Fish Pack supplies seven rigged models and swimming clips. The scene uses 26 small fish across three species plus one manta ray. Their animation phases and speeds vary, and `ReefFishSchool` moves each group around an editable loop while maintaining clearance above the seabed. These are ambient paths; obstacle avoidance, predator behavior and a full Boids simulation are not implemented.
@@ -130,7 +147,7 @@ Reefkeeper.exe -reef-smoke <absolute-output-directory> -screen-width 1600 -scree
 
 Build with `Reefkeeper.Editor.ReefSceneBuilder.BuildWindows` through Unity's `-executeMethod`, or the normal Windows Build Profiles workflow. Outputs are local under `Reefkeeper/Builds/Windows` and are not committed.
 
-The opt-in XR check uses simulated keyboard actions for swimming, controller translation, grip and release, then replays precise tracked-controller poses to sweep each dirt patch. It checks stationary contact, air strokes, unheld motion, completion, reset and switching modes, and captures an overview, a brush close-up and before/after images:
+The opt-in XR check uses simulated keyboard actions for swimming, controller translation, grip and release, then replays precise tracked-controller poses to sweep the configured dirt patch. It checks stationary contact, air strokes, unheld motion, completion, reset and switching modes, and captures an overview, a brush close-up and before/after images:
 
 ```text
 Reefkeeper.exe -reef-xr-smoke <absolute-output-directory> -screen-width 1600 -screen-height 900 -windowed
@@ -150,7 +167,15 @@ The pickup check exercises keyboard G, hover feedback, solid occlusion and reach
 Reefkeeper.exe -reef-pickup-smoke <absolute-output-directory> -screen-fullscreen 0 -screen-width 1280 -screen-height 720
 ```
 
+The cleaning check drives real keyboard/mouse input for brush pickup, persistent holding, occlusion/range rejection, pause/resume, physical contact animation, progress UI, gradual growth removal, completion, returning the brush, coral/tool exclusion and reset. It also verifies both audio sources are playing and loop, with music set below ambience:
+
+```text
+Reefkeeper.exe -reef-cleaning-smoke <absolute-output-directory> -screen-fullscreen 0 -screen-width 1280 -screen-height 720
+```
+
 ## Credits
+
+Attached algae uses project-authored short fronds and coating geometry, with Rob Tuytel's [Moss Wood](https://polyhaven.com/a/moss_wood) diffuse and normal maps from Poly Haven ([CC0](https://polyhaven.com/license)). The moss scan is an artistic placeholder for marine growth. Provenance and other reviewed candidates are in `Assets/ThirdParty/PolyHavenMossWood/README.md`.
 
 Unity's bundled Universal 3D template supplies the URP render settings. Reef geometry, movement, interface and supporting shaders were authored during this hackathon with Codex assistance. Underwater Shader Graphs are by **aniruddhahar**, [URP-WaterShaders](https://github.com/aniruddhahar/URP-WaterShaders), MIT, pinned to `1d18105ab76f894e3187d32bb4e412dbcb35df2c`. Source, license and integration notes are in `Reefkeeper/Assets/ThirdParty/URP-WaterShaders`; the license is also copied alongside Windows builds.
 

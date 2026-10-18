@@ -14,15 +14,16 @@ namespace Reefkeeper
         XRGrabInteractable grab;
         Vector3 lastTip;
         bool wasHeld;
+        ReefBrushPickup assisted;
         readonly Collider[] contacts = new Collider[32];
         readonly HashSet<RackDirtPatch> visited = new HashSet<RackDirtPatch>();
 
-        void Awake() { grab = GetComponent<XRGrabInteractable>(); }
+        void Awake() { grab = GetComponent<XRGrabInteractable>(); assisted = GetComponent<ReefBrushInteractable>()?.owner; }
         void LateUpdate()
         {
             Vector3 tip = bristles.position;
             InContact = false;
-            if (Held && wasHeld) Sweep(lastTip, tip);
+            if (Held && wasHeld && (!assisted || !assisted.Carrying || assisted.IsScrubbing)) Sweep(lastTip, tip);
             lastTip = tip;
             wasHeld = Held;
         }

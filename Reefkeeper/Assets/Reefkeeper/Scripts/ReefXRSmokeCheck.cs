@@ -41,7 +41,7 @@ namespace Reefkeeper
             }
             File.WriteAllText(Path.Combine(output, "xr-result.txt"),
                 "PASS: XR swimming and brake, simulated hand translation, keyboard grip -> XR selection, held brush follows hand, release, "
-                + "stationary/off-surface/unheld rejection, contact strokes on all 24 patches, completion, reset.\n"
+                + "stationary/off-surface/unheld rejection, contact strokes on every configured practice patch, completion, reset.\n"
                 + "Synthetic tracked-pose sweeps were used for precise contact. No physical headset or Rokoko validation.\n");
             if (keyboard != null) InputSystem.RemoveDevice(keyboard);
             Application.Quit(0);
@@ -121,7 +121,7 @@ namespace Reefkeeper
                 float stationary = patch.Cleaned;
                 for (int i = 0; i < 8; i++) yield return null;
                 Require(Mathf.Abs(stationary - patch.Cleaned) < 0.001f, "Stationary contact does not clean");
-                for (int sweep = 0; sweep < 4; sweep++)
+                for (int sweep = 0; sweep < Mathf.CeilToInt(patch.requiredTravel / 0.18f) + 2; sweep++)
                     for (int step = 0; step <= 10; step++)
                     {
                         float x = Mathf.Lerp(-0.09f, 0.09f, step / 10f) * (sweep % 2 == 0 ? 1 : -1);
@@ -130,7 +130,7 @@ namespace Reefkeeper
                         yield return null; yield return null;
                     }
                 Require(patch.Complete, "Sweeping cleans " + patch.name + " (" + patch.Cleaned + ")");
-                if (patch == workshop.patches[7])
+                if (patch == workshop.patches[0])
                     CaptureAngle(swim.view, rackCenter + new Vector3(1.7f, 1.15f, -1.7f), rackCenter,
                         Path.Combine(output, "rack-brushing.png"));
             }
