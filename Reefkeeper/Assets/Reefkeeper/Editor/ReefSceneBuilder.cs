@@ -246,6 +246,8 @@ namespace Reefkeeper.Editor
                 File.Copy("Assets/ThirdParty/QuaterniusAnimatedFish/License.txt", "Builds/Windows/Quaternius-Fish-LICENSE.txt", true);
             if (File.Exists("Assets/UI/Fonts/Nunito/OFL.txt"))
                 File.Copy("Assets/UI/Fonts/Nunito/OFL.txt", "Builds/Windows/Nunito-OFL.txt", true);
+            if (File.Exists("Assets/UI/InputPrompts/KENNEY-LICENSE.txt"))
+                File.Copy("Assets/UI/InputPrompts/KENNEY-LICENSE.txt", "Builds/Windows/Kenney-InputPrompts-LICENSE.txt", true);
             Debug.Log("REEFKEEPER_BUILD_PASSED");
         }
 

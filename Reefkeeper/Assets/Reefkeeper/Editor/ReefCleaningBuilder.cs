@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation;
 using Object = UnityEngine.Object;
 
@@ -47,6 +48,19 @@ namespace Reefkeeper.Editor
             var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             if (!material) { material = new Material(Shader.Find("Reefkeeper/UI Arc Progress")); AssetDatabase.CreateAsset(material, materialPath); }
             hud.arcMaterial = material;
+            hud.inputGlyphs = AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/UI/InputPrompts" })
+                .Select(AssetDatabase.GUIDToAssetPath).OrderBy(path => path)
+                .Select(path => ImportSprite(path, Vector4.zero)).ToArray();
+            foreach (var interactor in pickup.workshop.xrGroup.GetComponentsInChildren<XRBaseInputInteractor>(true))
+            {
+                var action = interactor.selectInput.inputActionReferencePerformed?.action;
+                if (action == null || action.name != "Select") continue;
+                if (!action.bindings.Any(binding => binding.effectivePath.Contains("GripButton")))
+                    throw new Exception("Controller Select no longer matches Grip prompts: " + interactor.name);
+            }
+            var brushAudio = pickup.brush.GetComponent<ReefBrushAudio>();
+            if (!brushAudio) brushAudio = pickup.brush.gameObject.AddComponent<ReefBrushAudio>();
+            brushAudio.pickup = pickup; brushAudio.scrubClip = Audio("Assets/Audio/SFX/brush_scrub.wav");
             foreach (var legacy in Object.FindObjectsByType<DiveHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None)) legacy.enabled = false;
             var simulator = pickup.workshop.xrGroup.GetComponentInChildren<XRInteractionSimulator>(true);
             simulator.interactionSimulatorUI = null;
@@ -54,7 +68,10 @@ namespace Reefkeeper.Editor
         }
         static Sprite Sprite(string name, Vector4 border)
         {
-            string path = "Assets/UI/Shapes/" + name + ".png";
+            return ImportSprite("Assets/UI/Shapes/" + name + ".png", border);
+        }
+        static Sprite ImportSprite(string path, Vector4 border)
+        {
             var importer = AssetImporter.GetAtPath(path) as TextureImporter;
             if (!importer) throw new Exception("UI sprite missing: " + path);
             importer.textureType = TextureImporterType.Sprite; importer.spriteImportMode = SpriteImportMode.Single;

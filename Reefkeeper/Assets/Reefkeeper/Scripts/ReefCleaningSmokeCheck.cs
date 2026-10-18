@@ -40,6 +40,9 @@ namespace Reefkeeper
             keyboard = InputSystem.AddDevice<Keyboard>("Cleaning check keyboard"); mouse = InputSystem.AddDevice<Mouse>("Cleaning check mouse");
             var view = pickup.View; var patch = pickup.practiceSpot; var hud = GetComponent<ReefCleaningHUD>();
             var audio = GetComponent<ReefSoundscape>();
+            var scrub = workshop.brush.GetComponent<ReefBrushAudio>();
+            Require(scrub && scrub.Source.clip && scrub.Source.loop && !scrub.Source.isPlaying, "Brush SFX ready but silent when idle");
+            Require(!hud.UsesQuestPrompts, "Desktop uses keyboard and mouse prompts");
             Require(audio && audio.AmbienceSource.isPlaying && audio.MusicSource.isPlaying && audio.AmbienceSource.loop && audio.MusicSource.loop
                 && audio.musicVolume < audio.ambienceVolume, "Both user audio clips loop with quieter music");
             Require(workshop.patches.Length == 1 && patch.growth.Length > 0, "One attached algae target");
@@ -60,17 +63,20 @@ namespace Reefkeeper
             view.transform.position = brushTarget + new Vector3(0, 0.22f, -0.75f); view.transform.LookAt(brushTarget);
             Physics.SyncTransforms(); yield return new WaitForSeconds(0.3f);
             Require(pickup.AimingBrush && pickup.brush.Highlighted, "Brush white highlight and pickup prompt");
+            Require(hud.CurrentPromptGlyph == "keyboard_g", "G pickup glyph matches desktop binding");
             yield return new WaitForEndOfFrame(); Capture(output, "brush-pickup.png");
             Keys(Key.G); yield return new WaitForSeconds(0.15f); Keys(); yield return new WaitForSeconds(0.3f);
             Require(pickup.Carrying && pickup.brush.isSelected && !pickup.brush.Highlighted, "Tap G holds brush after release");
             AimSpot(view, patch); yield return new WaitForSeconds(0.5f);
             Require(pickup.SpotInReach && patch.Cleaned == 0, "Aiming with idle brush does not clean");
+            Require(hud.CurrentPromptGlyph == "mouse_left" && !scrub.Source.isPlaying, "Left mouse scrub glyph and silent idle brush");
             yield return new WaitForEndOfFrame(); Capture(output, "cleaning-before.png");
             var blocker = GameObject.CreatePrimitive(PrimitiveType.Cube);
             blocker.transform.position = view.transform.position + view.transform.forward * 0.35f;
             blocker.transform.localScale = new Vector3(0.3f, 0.3f, 0.06f); Physics.SyncTransforms();
             Click(true); yield return new WaitForSeconds(0.4f);
             Require(!pickup.IsScrubbing && patch.Cleaned == 0, "Cannot scrub through obstruction");
+            Require(!scrub.Source.isPlaying, "No scrub sound through obstruction");
             Click(false); blocker.SetActive(false); Destroy(blocker); yield return null;
             view.transform.position -= view.transform.forward * 2; Click(true); yield return new WaitForSeconds(0.35f);
             Require(!pickup.IsScrubbing && patch.Cleaned == 0, "Cannot scrub from out of reach");
@@ -78,6 +84,7 @@ namespace Reefkeeper
             Click(true); yield return new WaitForSeconds(1.5f);
             Require(pickup.IsScrubbing && patch.Cleaned > 0.05f && !patch.Complete, "LMB animates physical contact and partial progress; progress=" + patch.Cleaned);
             Require(Mathf.Abs(hud.DisplayedProgress - patch.Cleaned) < 0.03f, "UI matches cleaning progress");
+            Require(scrub.Source.isPlaying, "Brush sound plays during actual contact strokes");
             Require(hud.Status.Length == 0, "Scrubbing hides unrelated pickup hints");
             Require(patch.growth.Any(t => !t.gameObject.activeSelf) && patch.dirtVisual.enabled, "Algae is removed gradually");
             var visibleRoots = patch.growth.Where(t => t.gameObject.activeSelf).ToArray();
@@ -101,11 +108,13 @@ namespace Reefkeeper
             Click(false); yield return new WaitForSeconds(0.2f); float paused = patch.Cleaned;
             yield return new WaitForSeconds(0.5f);
             Require(Mathf.Abs(paused - patch.Cleaned) < 0.001f, "Release pauses cleaning");
+            Require(!scrub.Source.isPlaying, "Releasing mouse stops scrub sound");
             Click(true);
             for (int i = 0; i < 600 && !patch.Complete; i++) yield return null;
             Click(false); yield return new WaitForSeconds(0.3f);
             Require(patch.Complete && !patch.dirtVisual.enabled && patch.growth.All(t => !t.gameObject.activeSelf), "Complete removes attached growth; progress=" + patch.Cleaned + " activeTufts=" + patch.growth.Count(t => t.gameObject.activeSelf));
             Require(hud.DisplayedProgress > 0.999f && hud.Status.Contains("complete"), "UI confirms completion");
+            Require(!scrub.Source.isPlaying, "Completion stops scrub sound");
             yield return new WaitForEndOfFrame(); Capture(output, "cleaning-complete.png");
             yield return new WaitForSeconds(2);
             Require(!hud.ProgressVisible && pickup.Carrying && pickup.SpotInReach, "Completed bar disappears while still aiming and holding brush");
@@ -136,7 +145,7 @@ namespace Reefkeeper
             view.transform.position = patch.transform.position + new Vector3(0, 0.35f, -0.85f);
             view.transform.LookAt(patch.transform.position + Vector3.up * 0.025f); Physics.SyncTransforms();
         }
-        static void Capture(string output, string file)
+        public static void Capture(string output, string file)
         {
             // Called at end of frame: includes the real overlay HUD after underwater post-processing.
             var image = ScreenCapture.CaptureScreenshotAsTexture();

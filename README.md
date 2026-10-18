@@ -28,6 +28,16 @@ Milestone 11: integrated the supplied original UI shapes with Nunito SemiBold/Bo
 
 The Windows build and the complete desktop cleaning check pass, including asset/font references, F1/O toggles, pickup, occlusion/range rejection, physical brush motion, spatial growth removal, pause/resume, completion hiding, tool exchange and reset. The screenshots are captured from the visible player after rendering the HUD. Run the cleaning check in a visible window so Unity can capture the screen overlay.
 
+Milestone 12: added Kenney keyboard/mouse and left/right Meta Quest Grip prompts, matching the active interaction mode. Desktop and simulator body mode use G and the left mouse button; controller mode uses the Grip icon for the interacting hand. The builder checks the XRI Select binding against GripButton. Brush release means releasing Grip, while coral retains its existing persistent hold behavior. Folded controls explain G as the simulator's Grip input. The original arc, panels and Nunito typography remain in place.
+
+The supplied brush_scrub.wav now loops only during physical contact strokes. Idle holding, air movement and obstructed attempts are silent; releasing, leaving the surface, completing or resetting stops the sound. The source recording is unchanged.
+
+Windows build and both desktop/XR simulator checks pass, including G/mouse glyphs, left/right Grip switching, native brush release, sound during contact strokes, silent idle/air movement and sound stopping on pause/completion. Quest hardware remains untested.
+
+| Keyboard pickup | Right-hand Grip release |
+| --- | --- |
+| ![Keyboard G pickup](docs/previews/milestone-12-keyboard.png) | ![Right-hand Grip release](docs/previews/milestone-12-quest-grip.png) |
+
 ![Nursery frame and suspended fragments](docs/previews/milestone-08-detail.png)
 
 Earlier milestone 04 interaction views:
@@ -129,6 +139,10 @@ The current nursery uses simple project-authored geometry based on the supplied 
 The two user-provided tracks play continuously as 2D loops: `Assets/Audio/Ambience/amb_underwater_loop.wav` at **0.75** volume and `Assets/Audio/Music/bgm_dream_culture.mp3` at **0.15**. The source recordings are unchanged; no trimming, effects or crossfades are applied. Unity streams them during playback. Select **WORKSHOP / coral nursery maintenance → ReefSoundscape** to adjust the two volume fields or replace the clips. Track provenance/licensing information was not included with the supplied files.
 
 New interface assets can be placed in `Assets/UI`; interaction sound cues belong in `Assets/Audio/SFX`. Include source/license notes with supplied assets.
+
+`Assets/Audio/SFX/brush_scrub.wav` is connected through **ReefBrushAudio** on the brush. Volume defaults to **0.35**, with partial spatial positioning (0.6) and no Doppler. It uses the same actual contact/movement result as cleaning, including native simulated-controller strokes. A short 80 ms grace bridges stroke turning points; release and lost contact stop immediately. The original ambience and music settings are unchanged.
+
+Input icons live under `Assets/UI/InputPrompts`, with Kenney's CC0 license. F1 opens the icon-based controls. Body mode shows keyboard/mouse glyphs even while the XR simulator is enabled; controller mode shows left/right Grip glyphs for hover or selection. Quest art does not enable headset support or replace hardware validation.
 
 The supplied original UI artwork is imported under `Assets/UI/Shapes`. Both arc sprites retain their full 512px canvas and share the same runtime rect. `Reefkeeper/UI Arc Progress` reveals the tinted layer from bottom to top and preserves its round moving end. The hint panel uses sliced borders of 80 / 52 / 80 / 52 pixels (left / bottom / right / top), with independent text. Nunito SemiBold and Bold live under `Assets/UI/Fonts/Nunito`, with their SIL Open Font License and source notes. `ReefCleaningHUD` owns the laptop interface; `ReefCleaningBuilder.PolishAndBuild` reapplies its import settings and references to the saved scene.
 

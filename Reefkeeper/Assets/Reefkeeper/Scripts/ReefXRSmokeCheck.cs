@@ -53,6 +53,9 @@ namespace Reefkeeper
             var workshop = GetComponent<ReefWorkshop>();
             var swim = workshop.xrGroup.GetComponentInChildren<ReefXRSwim>();
             var brush = workshop.brush;
+            var hud = GetComponent<ReefCleaningHUD>();
+            var scrub = brush.GetComponent<ReefBrushAudio>();
+            Require(!hud.UsesQuestPrompts, "Simulator body mode uses keyboard prompts");
             var grab = brush.GetComponent<XRGrabInteractable>();
             var body = brush.GetComponent<Rigidbody>();
             Transform right = null;
@@ -81,7 +84,12 @@ namespace Reefkeeper
             Vector3 rackCenter = workshop.transform.position + Vector3.up * 1.2f;
             CaptureAngle(swim.view, rackCenter + new Vector3(-4, 5, -5), rackCenter + Vector3.forward * 3,
                 Path.Combine(output, "reef-workshop-overview.png"));
-            Keys(Key.RightBracket); yield return null; Keys(); yield return null;
+            Keys(Key.LeftBracket); yield return new WaitForSeconds(0.15f); Keys(); yield return null;
+            Require(hud.UsesQuestPrompts && hud.ControllerGripGlyph == "quest_grip_left", "Left controller uses left Grip glyph");
+            Keys(Key.F1); yield return new WaitForSeconds(0.1f); Keys(); yield return new WaitForEndOfFrame();
+            ReefCleaningSmokeCheck.Capture(output, "quest-left-controls.png");
+            Keys(Key.F1); yield return new WaitForSeconds(0.1f); Keys(); yield return null;
+            Keys(Key.RightBracket); yield return new WaitForSeconds(0.15f); Keys(); yield return null;
             Vector3 handStart = right.position;
             Keys(Key.D); yield return new WaitForSeconds(0.25f); Keys(); yield return null;
             Require(Vector3.Distance(handStart, right.position) > 0.025f, "Keyboard moves the simulated right controller");
@@ -92,11 +100,14 @@ namespace Reefkeeper
             yield return new WaitForSeconds(0.25f);
             Keys(Key.G); yield return new WaitForSeconds(0.4f);
             Require(grab.isSelected, "Keyboard G reaches XR grab selection");
+            Require(hud.CurrentPromptGlyph == "quest_grip_right" && hud.Status.Contains("Release"), "Held right brush shows Grip release, not B drop");
+            yield return new WaitForEndOfFrame(); ReefCleaningSmokeCheck.Capture(output, "quest-right-grip.png");
             Vector3 brushStart = brush.transform.position;
             Keys(Key.G, Key.D); yield return new WaitForSeconds(0.3f); Keys(Key.G); yield return null;
             Require(Vector3.Distance(brushStart, brush.transform.position) > 0.025f, "Held brush follows simulated hand");
             Keys(); yield return new WaitForSeconds(0.2f);
             Require(!grab.isSelected, "Releasing G releases brush");
+            Require(!scrub.Source.isPlaying, "Released brush is silent");
             Log("keyboard grip, following and release");
 
             // For repeatable contact paths, replay controller poses while preserving the actual grip action.
@@ -113,6 +124,8 @@ namespace Reefkeeper
             Require(grab.isSelected, "Re-grab for tracked-pose replay");
             for (int i = 0; i < 10; i++) { right.position += Vector3.right * 0.02f; yield return null; }
             Require(workshop.Progress == 0, "Air strokes do not clean rack");
+            Require(!scrub.Source.isPlaying, "Air strokes are silent");
+            bool heardScrub = false;
             foreach (var patch in workshop.patches)
             {
                 Vector3 center = patch.transform.position + patch.transform.up * 0.04f;
@@ -121,6 +134,7 @@ namespace Reefkeeper
                 float stationary = patch.Cleaned;
                 for (int i = 0; i < 8; i++) yield return null;
                 Require(Mathf.Abs(stationary - patch.Cleaned) < 0.001f, "Stationary contact does not clean");
+                Require(!scrub.Source.isPlaying, "Stationary contact is silent");
                 for (int sweep = 0; sweep < Mathf.CeilToInt(patch.requiredTravel / 0.18f) + 2; sweep++)
                     for (int step = 0; step <= 10; step++)
                     {
@@ -128,6 +142,7 @@ namespace Reefkeeper
                         Vector3 desired = center + patch.transform.right * x;
                         right.position += desired - brush.bristles.position;
                         yield return null; yield return null;
+                        heardScrub |= scrub.Source.isPlaying;
                     }
                 Require(patch.Complete, "Sweeping cleans " + patch.name + " (" + patch.Cleaned + ")");
                 if (patch == workshop.patches[0])
@@ -135,6 +150,7 @@ namespace Reefkeeper
                         Path.Combine(output, "rack-brushing.png"));
             }
             Require(workshop.Progress > 0.999f, "Rack completion");
+            Require(heardScrub && !scrub.Source.isPlaying, "Native brush strokes play SFX and completion stops it");
             PrototypeSmokeCheck.Capture(swim.view, Path.Combine(output, "rack-after.png"));
             Log("contact strokes and complete rack");
             Keys(); yield return new WaitForSeconds(0.2f);
@@ -152,6 +168,7 @@ namespace Reefkeeper
             Log("unheld rejection and reset");
             Keys(Key.F2); yield return null; Keys(); yield return null;
             Require(workshop.desktopPlayer.activeSelf && !workshop.xrGroup.activeSelf, "Switch to desktop");
+            Require(!hud.UsesQuestPrompts, "Mode switch restores keyboard prompts");
             Keys(Key.F2); yield return null; Keys(); yield return null;
             Require(!workshop.desktopPlayer.activeSelf && workshop.xrGroup.activeSelf, "Switch back to XR simulator");
             Log("desktop and XR mode switching");

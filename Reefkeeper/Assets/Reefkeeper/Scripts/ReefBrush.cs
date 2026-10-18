@@ -10,6 +10,7 @@ namespace Reefkeeper
         public Transform bristles;
         public float contactRadius = 0.075f;
         public bool InContact { get; private set; }
+        public bool Scrubbing { get; private set; }
         public bool Held => grab && grab.isSelected;
         XRGrabInteractable grab;
         Vector3 lastTip;
@@ -23,6 +24,7 @@ namespace Reefkeeper
         {
             Vector3 tip = bristles.position;
             InContact = false;
+            Scrubbing = false;
             if (Held && wasHeld && (!assisted || !assisted.Carrying || assisted.IsScrubbing)) Sweep(lastTip, tip);
             lastTip = tip;
             wasHeld = Held;
@@ -47,10 +49,10 @@ namespace Reefkeeper
                     if (Vector3.Dot(bristles.up, normal) < 0.55f || Vector3.Dot(point - patch.transform.position, normal) < -0.015f) continue;
                     InContact = true;
                     float travel = Vector3.ProjectOnPlane(delta, normal).magnitude;
-                    if (travel > 0.0005f) patch.ApplyStroke(travel);
+                    if (travel > 0.0005f) { patch.ApplyStroke(travel); Scrubbing = !patch.Complete; }
                 }
             }
         }
-        void OnDisable() { wasHeld = false; }
+        void OnDisable() { wasHeld = false; InContact = false; Scrubbing = false; }
     }
 }
